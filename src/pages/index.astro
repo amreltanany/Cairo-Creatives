@@ -10,7 +10,8 @@ import Faq from '../components/Faq.astro';
 import Footer from '../components/Footer.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const pageUrl = new URL(`${base}/`, Astro.site).href;
-const ogImage = new URL(`${base}/og-image.jpg`, Astro.site).href;
+// bump ?v= whenever og-image.jpg changes: WhatsApp/Facebook cache previews per image URL
+const ogImage = new URL(`${base}/og-image.jpg?v=2`, Astro.site).href;
 const description = 'Your vision, our creativity. Shooting & editing, web development and graphic design from Cairo.';
 ---
 
@@ -37,7 +38,7 @@ const description = 'Your vision, our creativity. Shooting & editing, web develo
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600&family=Inter:wght@400;500;600&family=Orbitron:wght@700&display=swap" rel="stylesheet" />
     <link href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@600,700&display=swap" rel="stylesheet" />
     <script is:inline define:vars={{ base }}>
       // intro loader: only when the home page is opened from outside (link, bookmark, typed URL),
