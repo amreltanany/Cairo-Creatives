@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="395 415 1150 1105" fill="none" role="img" aria-label="Cairo Creatives">
+<title>Cairo Creatives</title>
+<defs/>
+<mask id="cc-a"><rect x="0" y="0" width="2000" height="2000" fill="#fff"/><path d="M1523.8 720A367 367 0 1 0 1522.5 880L1271.5 880A135 135 0 1 1 1275.9 720ZM1123.7 1053A362 362 0 1 0 1121.9 1215L865.7 1215A128 128 0 1 1 872.2 1053Z" fill="#000"/></mask>
+  <path d="M1523.8 720A367 367 0 1 0 1522.5 880L1271.5 880A135 135 0 1 1 1275.9 720ZM1123.7 1053A362 362 0 1 0 1121.9 1215L865.7 1215A128 128 0 1 1 872.2 1053Z" fill="#fff" stroke="#fff" stroke-width="16" stroke-linejoin="round" mask="url(#cc-a)"/>
+<mask id="cc-b"><rect x="0" y="0" width="2000" height="2000" fill="#fff"/><path d="M1430.3 657A300 300 0 1 0 1427.6 942L1302.7 942A200 200 0 1 1 1307.8 657ZM1021.7 990A288 288 0 1 0 1018.8 1275L889.7 1275A188 188 0 1 1 895.5 990Z" fill="#000"/></mask>
+  <path d="M1430.3 657A300 300 0 1 0 1427.6 942L1302.7 942A200 200 0 1 1 1307.8 657ZM1021.7 990A288 288 0 1 0 1018.8 1275L889.7 1275A188 188 0 1 1 895.5 990Z" fill="#fff" stroke="#fff" stroke-width="16" stroke-linejoin="round" mask="url(#cc-b)"/>
+</svg>

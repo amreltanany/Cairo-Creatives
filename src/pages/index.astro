@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Intro from '../components/Intro.astro';
+import Services from '../components/Services.astro';
+import Pricing from '../components/Pricing.astro';
+import Contact from '../components/Contact.astro';
+import Faq from '../components/Faq.astro';
+import Footer from '../components/Footer.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cairo Creatives — Creative Agency</title>
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@600,700&display=swap" rel="stylesheet" />
+    <script is:inline define:vars={{ base }}>
+      // intro loader: only when the home page is opened from outside (link, bookmark, typed URL),
+      // never on reload, back/forward or in-site navigation. ?loader=1 forces it for previews.
+      (function(){var d=document.documentElement;try{
+        var force=/[?&]loader=1/.test(location.search);
+        var nav=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0];
+        var fresh=!nav||nav.type==="navigate";
+        var internal=document.referrer&&document.referrer.indexOf(location.origin)===0;
+        var p=location.pathname,home=p===base+"/"||p===base||p===base+"/index.html";
+        if(!d.classList.contains("reduce-motion")&&(force||(home&&fresh&&!internal))){d.classList.add("loading");setTimeout(function(){d.classList.remove("loading")},3400)}
+      }catch(e){}})();
+    </script>
+  </head>
+  <body>
+    <div class="loader" aria-hidden="true">
+      <div class="loader__pair">
+        <div class="loader__mark"><img src={`${base}/logo-mark.svg`} alt="" width="1150" height="1105" /></div>
+        <div class="loader__name"><div><div class="loader__text"><strong>Cairo Creatives</strong><span>Creative Agency</span></div></div></div>
+      </div>
+    </div>
+    <Nav />
+    <Hero />
+    <Intro />
+    <Services />
+    <Pricing />
+    <Contact />
+    <Faq />
+    <Footer />
+    <button class="to-top" type="button" aria-label="Back to top">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
+    <script>
+      import '../scripts/main.js';
+    </script>
+  </body>
+</html>

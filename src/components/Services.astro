@@ -1,0 +1,41 @@
+---
+const services = [
+  ["Shooting & Editing", "From the first shot to the final cut: we film your brand, products and events, then edit them into videos people watch to the end.", ["Product & brand shoots", "Event coverage", "Reels & short videos", "Video editing", "Color grading", "Motion & subtitles"]],
+  ["Web Development", "Fast, modern websites that look great on every screen and turn visitors into customers.", ["Landing pages", "Business websites", "Online stores", "Responsive design", "Speed & SEO basics", "Maintenance"]],
+  ["Graphic Design", "Visuals that make your brand recognizable everywhere, from your logo to every post you share.", ["Logo & identity", "Social media posts", "Ad creatives", "Brand guidelines", "Print & packaging", "Photo editing"]],
+];
+// work samples per card as { src, alt, href? } (href opens the live site in a new tab); a card shows at least two frames, missing ones keep the placeholder
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const photos = [
+  [],
+  [
+    { src: `${base}/images/work/display-egypt.webp`, alt: "Display Egypt website built by Cairo Creatives", href: "https://displayegypt.com/" },
+    { src: `${base}/images/work/switch-on.webp`, alt: "Switch On online store built by Cairo Creatives", href: "https://amreltanany.github.io/Switch-On/" },
+    { src: `${base}/images/work/taj.webp`, alt: "TAJ dental clinic website built by Cairo Creatives", href: "https://tajclinics-7f4tfgfb.manus.space/" },
+    { src: `${base}/images/work/qaro2a.webp`, alt: "Qaro2a website built by Cairo Creatives", href: "https://qaro2a.com/" },
+  ],
+  [],
+];
+---
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="head rv"><div class="tag">Services</div><h2 class="h2">What we do, start to finish</h2></div>
+    <div>
+      {services.map(([title, text, items], i) => (
+        <div class="svc">
+          <div class="txt rv">
+            <div><h3>{title}</h3><p>{text}</p></div>
+            <ul><li class="n">(0{i + 1})</li>{items.map((x) => <li>{x}</li>)}</ul>
+          </div>
+          <div class="imgs">
+            {[...Array(Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
+              ? (photos[i][k].href
+                ? <a class="ph reveal photo" href={photos[i][k].href} target="_blank" rel="noopener"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /><span class="visit">Visit site ↗</span></a>
+                : <div class="ph reveal photo"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /></div>)
+              : <div class={`ph reveal ${k === 0 ? (i % 2 ? "cool" : "warm") : ""}`}></div>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# local-only: review screenshots, the old single-file HTML version, editor/agent settings
+screenshots/
+old-html/
+.claude/
+
+# logs / env
+npm-debug.log*
+.env
+.env.*
+.DS_Store

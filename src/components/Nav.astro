@@ -1,0 +1,18 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<nav>
+  <a href="#" class="logo" aria-label="Cairo Creatives home"><img src={`${base}/logo.svg`} alt=""><span>Cairo Creatives</span></a>
+  <div class="links">
+    <a href="#"><span class="roll"><span data-t="Home">Home</span></span><sup>01</sup></a>
+    <a href="#intro"><span class="roll"><span data-t="About us">About us</span></span><sup>02</sup></a>
+    <a href="#services"><span class="roll"><span data-t="Services">Services</span></span><sup>03</sup></a>
+    <a href="#pricing"><span class="roll"><span data-t="Pricing">Pricing</span></span><sup>04</sup></a>
+    <a href="#faq"><span class="roll"><span data-t="FAQ">FAQ</span></span><sup>05</sup></a>
+    <a href="#contact" class="btn"><span class="roll"><span data-t="Contact us">Contact us</span></span></a>
+  </div>
+  <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"></button>
+</nav>
+<div class="menu" id="menu" aria-hidden="true">
+  <a href="#">Home</a><a href="#intro">About us</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#contact">Contact us</a>
+</div>

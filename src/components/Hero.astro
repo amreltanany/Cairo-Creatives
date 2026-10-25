@@ -1,0 +1,59 @@
+<header class="hero">
+  <svg class="scene layer" data-k="0.4" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <defs>
+      <linearGradient id="sky1" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="660">
+        <stop offset="0" stop-color="#000a24"/><stop offset=".6" stop-color="#001a52"/><stop offset="1" stop-color="#0a3a9e"/>
+      </linearGradient>
+      <linearGradient id="water1" gradientUnits="userSpaceOnUse" x1="0" y1="660" x2="0" y2="900">
+        <stop offset="0" stop-color="#06205c"/><stop offset="1" stop-color="#001233"/>
+      </linearGradient>
+      <radialGradient id="halo1"><stop offset="0" stop-color="#bcd8ff" stop-opacity=".9"/><stop offset="1" stop-color="#bcd8ff" stop-opacity="0"/></radialGradient>
+      <pattern id="lattice" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <path d="M0 0V10" stroke="#2f7bff" stroke-opacity=".35" stroke-width="1.2"/>
+      </pattern>
+    </defs>
+    <rect x="-1000" y="-900" width="3440" height="1600" fill="url(#sky1)"/>
+    <g id="stars1"></g>
+    <circle cx="260" cy="150" r="90" fill="url(#halo1)" opacity=".35"/>
+    <circle cx="260" cy="150" r="26" fill="#dbe9ff"/>
+  </svg>
+  <svg class="scene layer" data-k="0.2" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <!-- far skyline -->
+    <g id="city1" fill="#000f30"></g>
+  </svg>
+  <svg class="scene layer tower-layer" data-k="0.1" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <!-- Cairo Tower -->
+    <g id="tower">
+      <path d="M962 640 L966 300 Q968 262 948 236 L1032 236 Q1012 262 1014 300 L1018 640Z" fill="#00102e"/>
+      <path d="M962 640 L966 300 Q968 262 948 236 L1032 236 Q1012 262 1014 300 L1018 640Z" fill="url(#lattice)"/>
+      <rect x="944" y="214" width="92" height="22" rx="3" fill="#00102e"/>
+      <rect x="944" y="220" width="92" height="6" fill="#bcd8ff" class="lamp"/>
+      <path d="M956 214 L964 192 L1016 192 L1024 214Z" fill="#00102e"/>
+      <path d="M990 192 V110" stroke="#00102e" stroke-width="5"/>
+      <circle cx="990" cy="108" r="4" fill="#8fc1ff" class="tw"/>
+      <!-- logo-style white outline -->
+      <path d="M962 640 L966 300 Q968 262 948 236 L944 236 V214 L956 214 L964 192 L1016 192 L1024 214 L1036 214 V236 L1032 236 Q1012 262 1014 300 L1018 640" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+    </g>
+  </svg>
+  <svg class="scene layer" data-k="0" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <!-- river -->
+    <rect x="-1000" y="660" width="3440" height="400" fill="url(#water1)"/>
+    <g opacity=".18" transform="translate(0 1320) scale(1 -1)">
+      <use href="#tower"/>
+    </g>
+    <g id="refl1"></g>
+  </svg>
+  <svg class="scene layer" data-k="-0.15" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <!-- Qasr el Nil bridge -->
+    <g id="bridge">
+      <rect x="-1000" y="648" width="1850" height="14" fill="#000a24"/>
+      <g id="arches" fill="#000a24"></g>
+      <g id="lamps1"></g>
+      <path d="M-1000 648 H850" stroke="#fff" stroke-width="2"/>
+    </g>
+  </svg>
+  <div class="hero-bottom">
+    <h1>Your<span class="swap" id="swap"></span>Agency <span class="star">✱</span></h1>
+    <p>Your vision, our creativity</p>
+  </div>
+</header>
