@@ -9,6 +9,9 @@ import Contact from '../components/Contact.astro';
 import Faq from '../components/Faq.astro';
 import Footer from '../components/Footer.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pageUrl = new URL(`${base}/`, Astro.site).href;
+const ogImage = new URL(`${base}/og-image.jpg`, Astro.site).href;
+const description = 'Your vision, our creativity. Shooting & editing, web development and graphic design from Cairo.';
 ---
 
 <!doctype html>
@@ -18,6 +21,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cairo Creatives — Creative Agency</title>
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <!-- link previews (WhatsApp, Facebook, LinkedIn, X): absolute URLs, 1200x630 JPG -->
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cairo Creatives" />
+    <meta property="og:title" content="Cairo Creatives — Creative Agency" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Cairo Creatives logo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cairo Creatives — Creative Agency" />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <link href="https://api.fontshare.com/v2/css?f[]=clash-grotesk@600,700&display=swap" rel="stylesheet" />
