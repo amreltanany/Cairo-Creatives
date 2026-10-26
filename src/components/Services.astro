@@ -4,10 +4,12 @@ const services = [
   ["Web Development", "Fast, modern websites that look great on every screen and turn visitors into customers.", ["Landing pages", "Business websites", "Online stores", "Responsive design", "Speed & SEO basics", "Maintenance"]],
   ["Graphic Design", "Visuals that make your brand recognizable everywhere, from your logo to every post you share.", ["Logo & identity", "Social media posts", "Ad creatives", "Brand guidelines", "Print & packaging", "Photo editing"]],
 ];
-// work samples per card as { src, alt, href? } (href opens the live site in a new tab); a card shows at least two frames, missing ones keep the placeholder
+// work samples per card as { src, alt, href? } (href opens the live site in a new tab) or { embed, alt } (Behance player); a card shows at least two frames, missing ones keep the placeholder
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const photos = [
-  [],
+  [
+    { embed: "https://www.behance.net/embed/project/243523649?ilo0=1", alt: "Video editing project by Cairo Creatives on Behance" },
+  ],
   [
     { src: `${base}/images/work/display-egypt.webp`, alt: "Display Egypt website built by Cairo Creatives", href: "https://displayegypt.com/" },
     { src: `${base}/images/work/switch-on.webp`, alt: "Switch On online store built by Cairo Creatives", href: "https://amreltanany.github.io/Switch-On/" },
@@ -29,7 +31,9 @@ const photos = [
           </div>
           <div class="imgs">
             {[...Array(Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
-              ? (photos[i][k].href
+              ? (photos[i][k].embed
+                ? <div class="ph reveal embed"><iframe src={photos[i][k].embed} title={photos[i][k].alt} loading="lazy" allowfullscreen allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+                : photos[i][k].href
                 ? <a class="ph reveal photo" href={photos[i][k].href} target="_blank" rel="noopener"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /><span class="visit">Visit site ↗</span></a>
                 : <div class="ph reveal photo"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /></div>)
               : <div class={`ph reveal ${k === 0 ? (i % 2 ? "cool" : "warm") : ""}`}></div>)}
