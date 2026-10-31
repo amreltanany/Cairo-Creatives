@@ -1,20 +1,25 @@
 ---
 const services = [
-  ["Shooting & Editing", "From the first shot to the final cut: we film your brand, products and events, then edit them into videos people watch to the end.", ["Product & brand shoots", "Event coverage", "Reels & short videos", "Video editing", "Color grading", "Motion & subtitles"]],
-  ["Web Development", "Fast, modern websites that look great on every screen and turn visitors into customers.", ["Landing pages", "Business websites", "Online stores", "Responsive design", "Speed & SEO basics", "Maintenance"]],
-  ["Graphic Design", "Visuals that make your brand recognizable everywhere, from your logo to every post you share.", ["Logo & identity", "Social media posts", "Ad creatives", "Brand guidelines", "Print & packaging", "Photo editing"]],
+  ["Shooting & Editing", "From the first shot to the final cut: we film your brand, products and events, then edit them into videos people watch to the end.", [[null, "Product & brand shoots", "product-shoot.webp"], [null, "Reels & short videos", "reels-tag.webp", "center 42%"], [null, "Video editing", "video-tag.webp", "center 44%"], [null, "Motion & subtitles", "motion-tag.webp", "center 30%"]]],
+  ["Web Development", "Fast, modern websites that look great on every screen and turn visitors into customers.", [[null, "Landing pages", "landing-tag.webp", "left center", "https://amreltanany.github.io/apex-nine-racing/"], [null, "Business websites", "business-tag.webp", "center top", "https://qaro2a.com/"], [null, "Online stores", "store-tag.webp", "center 66%;background-size:190%", "https://amreltanany.github.io/sneakers/"], [null, "Responsive design", "responsive-tag.webp", "center 30%", "https://amreltanany.github.io/MeridianBuild/"], [null, "Speed & SEO", "speed-tag.webp", "center top", "https://samconstructions-eg.com/"], [null, "Maintenance", "maintenance-tag.webp", "center 20%", "https://amreltanany.github.io/ronin/"]]],
+  ["Graphic Design", "Visuals that make your brand recognizable everywhere, from your logo to every post you share.", [["🔷", "Logo & identity"], ["💬", "Social media posts"], ["📣", "Ad creatives"], ["📘", "Brand guidelines"], ["📦", "Print & packaging"], ["🖼️", "Photo editing"]]],
 ];
-// work samples per card as { src, alt, href? } (href opens the live site in a new tab) or { embed, alt } (Behance player); a card shows at least two frames, missing ones keep the placeholder
+// work samples per card as { src, alt, href? } (href opens the live site in a new tab), { embed, alt } (Behance player) or { reels: [{ src, alt }] } (vertical images in one row); a card shows at least two frames, missing ones keep the placeholder
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const photos = [
   [
     { embed: "https://www.behance.net/embed/project/243523649?ilo0=1", alt: "Video editing project by Cairo Creatives on Behance" },
+    { embed: "https://www.behance.net/embed/project/251299651?ilo0=1", alt: "Reels Saudi Arabia project on Behance" },
+    { reels: [
+      { src: `${base}/images/work/reel-1.webp`, alt: "Vertical video edit for a photography studio" },
+      { src: `${base}/images/work/reel-2.webp`, alt: "Vertical video edit with an editing tutorial" },
+      { src: `${base}/images/work/reel-3.webp`, alt: "Vertical video edit for a promotional offer" },
+    ] },
   ],
   [
     { src: `${base}/images/work/display-egypt.webp`, alt: "Display Egypt website built by Cairo Creatives", href: "https://displayegypt.com/" },
     { src: `${base}/images/work/switch-on.webp`, alt: "Switch On online store built by Cairo Creatives", href: "https://amreltanany.github.io/Switch-On/" },
     { src: `${base}/images/work/taj.webp`, alt: "TAJ dental clinic website built by Cairo Creatives", href: "https://tajclinics-7f4tfgfb.manus.space/" },
-    { src: `${base}/images/work/qaro2a.webp`, alt: "Qaro2a website built by Cairo Creatives", href: "https://qaro2a.com/" },
   ],
   [],
 ];
@@ -27,12 +32,16 @@ const photos = [
         <div class="svc">
           <div class="txt rv">
             <div><h3>{title}</h3><p>{text}</p></div>
-            <ul><li class="n">(0{i + 1})</li>{items.map((x) => <li>{x}</li>)}</ul>
+            <ul>{items.map(([icon, label, bg, pos, href]) => bg
+              ? <li class="pill has-bg" style={`background-image:linear-gradient(0deg,rgba(0,8,30,.94) 12%,rgba(0,8,30,.72) 42%,rgba(0,8,30,0) 82%),url(${base}/images/work/${bg})${pos ? `;background-position:${pos}` : ""}`}>{href ? <a href={href} target="_blank" rel="noopener">{label}</a> : label}</li>
+              : <li class="pill"><span aria-hidden="true">{icon}</span>{label}</li>)}</ul>
           </div>
           <div class="imgs">
             {[...Array(Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
-              ? (photos[i][k].embed
-                ? <div class="ph reveal embed"><iframe src={photos[i][k].embed} title={photos[i][k].alt} loading="lazy" allowfullscreen allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+              ? (photos[i][k].reels
+                ? <div class="reels">{photos[i][k].reels.map((r) => <div class="ph reveal photo reel"><img src={r.src} alt={r.alt} loading="lazy" /></div>)}</div>
+                : photos[i][k].embed
+                ? <div class="ph reveal embed"><iframe src={photos[i][k].embed} title={photos[i][k].alt} loading="lazy" scrolling="no" allowfullscreen allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
                 : photos[i][k].href
                 ? <a class="ph reveal photo" href={photos[i][k].href} target="_blank" rel="noopener"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /><span class="visit">Visit site ↗</span></a>
                 : <div class="ph reveal photo"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /></div>)
