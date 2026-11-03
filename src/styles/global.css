@@ -89,7 +89,7 @@ nav{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:c
 .swap .w.out i{transform:translateY(-110%)}
 .swap .w.reset i{transition:none}
 .swap{position:relative}
-.swap .w{position:absolute;left:0;top:0}
+.swap .w{position:absolute;inset-inline-start:0;top:0}
 .hero p{font:600 24px/1.4 var(--body);max-width:400px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -112,7 +112,13 @@ nav{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:c
 .svc ul{list-style:none;flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:14px;margin-top:32px}
 .svc li.pill{display:flex;align-items:center;gap:14px;padding:18px 20px;border-radius:var(--r-md);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font:600 19px/1.25 var(--body)}
 .svc li.pill span{font-size:30px;line-height:1;flex:none}
-.svc li.pill.has-bg{align-items:flex-end;background-size:cover;background-position:center 62%}
+.svc li.pill.has-bg{align-items:flex-end;background-size:cover;background-repeat:no-repeat;background-position:center 62%;isolation:isolate}
+.svc li.pill.has-bg::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;background:linear-gradient(0deg,rgba(0,8,30,.94) 12%,rgba(0,8,30,.72) 42%,rgba(0,8,30,0) 82%)}
+/* design work is the point of these tags: no shade on the image, the label sits on a chip */
+.svc li.pill b{font:inherit}
+.svc:last-child li.pill.has-bg{padding:10px}
+.svc:last-child li.pill.has-bg::before{content:none}
+.svc:last-child li.pill.has-bg b{padding:6px 12px;border-radius:8px;background:var(--navy);font-size:15px}
 /* linked tags: the whole tag is the link */
 .svc li.pill.has-bg{position:relative;transition:border-color .25s,transform .25s var(--ease)}
 .svc li.pill.has-bg a::after{content:"";position:absolute;inset:0;border-radius:inherit}
@@ -122,21 +128,77 @@ nav{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:c
 .svc .imgs{display:grid;gap:20px}
 .svc .imgs .ph{aspect-ratio:4/3;border:20px solid var(--navy-2);outline:1px solid rgba(255,255,255,.1)}
 
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 
 /* PRICING */
 .pricing{background:var(--navy);color:#fff}
 .pricing .h2{margin-bottom:60px}
-.plan{background:var(--navy-2);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-sm);padding:32px;display:flex;flex-direction:column;gap:24px}
-.plan.hot{background:#fff;color:#000}
-.plan.hot .muted{color:rgba(0,0,0,.6)}
-.plan h6{font:600 14px var(--mono);letter-spacing:.08em}
-.price{font:600 56px var(--display)}
-.price small{font:500 16px var(--body);opacity:.6}
-.plan ul{list-style:none;display:grid;gap:12px;font:500 15px/1.4 var(--body)}
-.plan li::before{content:"✓";color:var(--accent);margin-right:10px}
-.plan .btn{margin-top:auto}
-.plan.hot .btn{background:var(--navy);color:#fff}
+/* sliding plan cards: everything in a card is sized in em, so the card scales as one piece */
+.pricing{overflow-x:clip}
+.pslider{--w:clamp(270px,24vw,380px);position:relative;height:calc(var(--w)*285/172 + 40px);isolation:isolate;touch-action:pan-y;user-select:none}
+.pcard{position:absolute;left:50%;top:20px;width:var(--w);aspect-ratio:172/285;margin-left:calc(var(--w)/-2);display:flex;flex-direction:column;align-items:center;gap:.7em;padding:1.3em 1.4em;overflow:hidden;background:linear-gradient(180deg,#0d1b4d,#081238);border:1px solid rgba(95,130,255,.4);color:#fff;border-radius:2em;font:500 calc(var(--w)/22)/1.35 var(--body);text-align:center;cursor:pointer;transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .7s}
+.pcard[data-p="0"]{z-index:3;cursor:auto;background:linear-gradient(180deg,#1f378f,#101f5c 70%)}
+.pcard[data-p="1"],.pcard[data-p="-1"]{z-index:2;filter:blur(1.5px) brightness(.8)}
+.pcard[data-p="2"],.pcard[data-p="-2"]{z-index:1;filter:blur(3px) brightness(.6)}
+.pcard[data-p="1"]{transform:translateX(calc(var(--w)*.87)) scale(.85)}
+.pcard[data-p="-1"]{transform:translateX(calc(var(--w)*-.87)) scale(.85)}
+.pcard[data-p="2"]{transform:translateX(calc(var(--w)*1.55)) scale(.755)}
+.pcard[data-p="-2"]{transform:translateX(calc(var(--w)*-1.55)) scale(.755)}
+.picon{width:4.4em;height:4.4em;flex:none;display:grid;place-items:center;border-radius:50%;background:#050d2c;border:1px solid rgba(95,130,255,.5);box-shadow:0 0 0 .3em rgba(95,130,255,.1)}
+.picon svg{width:2.1em;height:2.1em;fill:none;stroke:#5ec8ff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pcard h3{padding:.25em 1em;border:1px solid #5ec8ff;border-radius:999px;color:#5ec8ff;font:600 .68em/1.3 var(--mono);letter-spacing:.14em;text-transform:uppercase}
+.pprice{display:flex;align-items:baseline;gap:.3em;font:600 1.15em/1.1 "Cairo",var(--body)}
+.pprice strong{font-size:2.5em;font-weight:700}
+.pprice small{font-size:.65em;font-weight:500;opacity:.7}
+.pline{font-size:.8em;color:rgba(255,255,255,.75)}
+.pcard ul{flex:1;align-self:stretch;list-style:none;display:grid;align-content:space-evenly;margin-top:.2em;border-top:1px solid rgba(95,130,255,.25);text-align:start}
+.pcard li{display:flex;align-items:center;gap:.7em;font-size:.86em}
+.pcard li::before{content:"✓";width:1.5em;height:1.5em;flex:none;display:grid;place-items:center;border-radius:50%;background:#3a55e0;font-size:.8em;font-weight:700;line-height:1}
+.pcard a{padding:.7em 1.8em;border-radius:.7em;background:#24399a;border:1px solid rgba(95,130,255,.5);font-weight:600;font-size:.8em;text-transform:uppercase;letter-spacing:.03em;transition:background .2s}
+.pcard a:hover{background:var(--accent)}
+.pcard:not([data-p="0"]) :is(a,input,select,button,summary){pointer-events:none}
+/* add-ons: a panel over the card body; chosen ones show on the card in green */
+.pcard{--add:#3fd28b}
+.pfoot{display:flex;align-items:center;justify-content:center;gap:.6em}
+.padds{border:0;padding:0}
+.padds summary{display:block;padding:.7em 1.1em;border:1px solid var(--add);border-radius:.7em;color:var(--add);font:600 .8em/1.2 var(--body);cursor:pointer}
+.padds summary::after{content:none}
+.padds[open] summary{background:var(--add);color:var(--navy)}
+.ppanel{position:absolute;inset:1em 1em 4.4em;z-index:6;display:grid;align-content:start;gap:.7em;padding:1em;overflow-y:auto;border:1px solid var(--add);border-radius:1.2em;background:#050d2c;box-shadow:0 .5em 1.5em rgba(0,0,0,.5);text-align:start}
+.ppanel>strong{color:var(--add)}
+.ppanel label{display:flex;align-items:center;justify-content:space-between;gap:.6em;font-size:.8em;font-weight:600}
+.ppanel label.pcheck{justify-content:flex-start}
+.ppanel small{display:block;font-weight:500;color:rgba(255,255,255,.6)}
+.ppanel input[type=number]{width:3.6em;padding:.3em;border:1px solid rgba(255,255,255,.3);border-radius:.4em;background:#0d1b4d;color:#fff;font:inherit;text-align:center}
+.ppanel input[type=checkbox]{width:1.1em;height:1.1em;flex:none;accent-color:var(--add)}
+.pdone{justify-self:center;padding:.5em 1.6em;border:0;border-radius:.6em;background:var(--add);color:var(--navy);font:600 .8em var(--body);cursor:pointer}
+.padd{margin:0 .35em;color:var(--add);font-style:normal;font-weight:700}
+.pextra{display:flex;flex-wrap:wrap;justify-content:center;gap:.2em .8em;color:var(--add);font-size:.68em;font-weight:600}
+.pextra:not(:has(span:not([hidden]))){display:none}
+/* custom plan: amber card with a calculator in place of the plan list */
+.pcard.custom,.pcard.custom[data-p="0"]{background:linear-gradient(180deg,#ffc64d,#e8941a);border-color:#ffd98a;color:var(--navy)}
+.custom .picon{background:var(--navy);border-color:var(--navy);box-shadow:0 0 0 .3em rgba(0,18,51,.14)}
+.custom .picon svg{stroke:#ffc64d}
+.custom h3{border-color:var(--navy);color:var(--navy)}
+.custom .pline{color:rgba(0,18,51,.75)}
+.custom a{background:var(--navy);border-color:var(--navy);color:#fff}
+/* more choices than the card has room for: the list scrolls inside the card (data-lenis-prevent lets the wheel reach it) */
+.pcalc{flex:1;min-height:0;align-self:stretch;display:grid;align-content:start;gap:.55em;margin-top:.2em;padding:.6em .4em .6em 0;border-top:1px solid rgba(0,18,51,.3);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--navy) transparent}
+.pcalc .pcheck{justify-content:flex-start}
+.pcalc .pcheck input{width:1.1em;height:1.1em;flex:none;accent-color:var(--navy)}
+.pcalc label{display:flex;align-items:center;justify-content:space-between;gap:.6em;font-size:.82em;font-weight:600;text-align:start}
+.pcalc :is(input,select){padding:.3em .4em;border:1px solid rgba(0,18,51,.4);border-radius:.4em;background:#fff;color:var(--navy);font:inherit;user-select:text}
+.pcalc input{width:4.2em;text-align:center}
+.pcalc select{width:12em}
+.prange{align-self:stretch;display:grid;gap:.3em;font-size:.8em;font-weight:600}
+.prange input{width:100%;accent-color:#5ec8ff;cursor:pointer}
+.pcard li b{color:#5ec8ff}
+/* Accounts carries a long list plus fixed details: tighter type so it fits the same card */
+.pcard.dense{gap:.4em;padding-top:1em;padding-bottom:1em}
+.pcard.dense .picon{width:3em;height:3em}
+.pcard.dense .picon svg{width:1.6em;height:1.6em}
+.pcard.dense .pprice strong{font-size:2.2em}
+.pcard.dense ul{font-size:.92em;line-height:1.2}
+@media (max-width:900px){.pslider{--w:min(72vw,340px)}}
 
 /* CONTACT */
 .contact{position:relative;padding:160px var(--pad);background:repeating-linear-gradient(0deg,#cfcfcf 0 3px,#bdbdbd 3px 26px)}
@@ -181,7 +243,7 @@ footer .bg{position:absolute;inset:0;background:radial-gradient(ellipse at 35% 3
   .intro .card{padding:32px 24px}
   .intro .big{font-size:44px}
   .h2{font-size:40px}
-  .svc,.grid3,.faq,.fcols{grid-template-columns:minmax(0,1fr)}
+  .svc,.faq,.fcols{grid-template-columns:minmax(0,1fr)}
   .svc .txt{position:static;min-height:auto;gap:32px}
   .contact{padding:80px var(--pad)}
   .contact form{padding:28px}
@@ -268,5 +330,31 @@ html{scrollbar-color:var(--accent) var(--navy);scrollbar-width:thin}
 /* vertical video stills: each in its own card, side by side (stacked on phones) */
 .reels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .svc .imgs .ph.reel{aspect-ratio:9/16;border-width:12px}
+.svc .imgs .ph.poster{aspect-ratio:auto;border-width:12px}
+.ph.poster img{height:auto}
+@media (min-width:901px){.reels.posters{grid-template-columns:repeat(2,minmax(0,1fr))}.reels.posters .ph:last-child:nth-child(odd){grid-column:1/-1}}
 @media (max-width:900px){.reels{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:900px){.svc li.pill.has-bg{min-height:190px}}
+
+/* language switch in the nav and the mobile menu */
+.links .lang-switch{padding:6px 14px;border:1px solid rgba(255,255,255,.35);border-radius:999px;transition:border-color .2s}
+.links .lang-switch:hover{border-color:#fff}
+.lang-switch:lang(ar){font-family:"Cairo",sans-serif}
+/* Arabic page: Cairo stands in for the Latin display, body and mono fonts, and tracking is off
+   because spacing letters apart breaks Arabic joins. The loader animates left to right in both languages. */
+html[lang="ar"]{--display:"Cairo",sans-serif;--body:"Cairo",sans-serif;--mono:"Cairo",sans-serif}
+html[lang="ar"] *{letter-spacing:normal!important}
+.loader{direction:ltr}
+/* Arabic letters reach higher and lower than Latin caps: give the hero swap slot room so words are not clipped */
+html[lang="ar"] .hero h1{line-height:1.2}
+html[lang="ar"] .swap{height:1.3em}
+/* number boxes in the pricing cards: typing only, no spinner arrows */
+.pcard input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.pcard input[type=number]::-webkit-inner-spin-button,.pcard input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+/* Custom list: a slim navy bar with no arrow buttons. Chrome draws arrows whenever the standard scrollbar props
+   apply (they inherit from html), so where the webkit pseudo-elements exist they are reset to use those instead. */
+@supports selector(::-webkit-scrollbar){.pcalc{scrollbar-width:auto;scrollbar-color:auto}}
+.pcalc::-webkit-scrollbar{width:4px}
+.pcalc::-webkit-scrollbar-track{background:transparent}
+.pcalc::-webkit-scrollbar-thumb{background:var(--navy);border:0;border-radius:999px}
+.pcalc::-webkit-scrollbar-button{display:none;height:0}

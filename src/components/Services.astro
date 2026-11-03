@@ -1,49 +1,59 @@
 ---
-const services = [
-  ["Shooting & Editing", "From the first shot to the final cut: we film your brand, products and events, then edit them into videos people watch to the end.", [[null, "Product & brand shoots", "product-shoot.webp"], [null, "Reels & short videos", "reels-tag.webp", "center 42%"], [null, "Video editing", "video-tag.webp", "center 44%"], [null, "Motion & subtitles", "motion-tag.webp", "center 30%"]]],
-  ["Web Development", "Fast, modern websites that look great on every screen and turn visitors into customers.", [[null, "Landing pages", "landing-tag.webp", "left center", "https://amreltanany.github.io/apex-nine-racing/"], [null, "Business websites", "business-tag.webp", "center top", "https://qaro2a.com/"], [null, "Online stores", "store-tag.webp", "center 66%;background-size:190%", "https://amreltanany.github.io/sneakers/"], [null, "Responsive design", "responsive-tag.webp", "center 30%", "https://amreltanany.github.io/MeridianBuild/"], [null, "Speed & SEO", "speed-tag.webp", "center top", "https://samconstructions-eg.com/"], [null, "Maintenance", "maintenance-tag.webp", "center 20%", "https://amreltanany.github.io/ronin/"]]],
-  ["Graphic Design", "Visuals that make your brand recognizable everywhere, from your logo to every post you share.", [["🔷", "Logo & identity"], ["💬", "Social media posts"], ["📣", "Ad creatives"], ["📘", "Brand guidelines"], ["📦", "Print & packaging"], ["🖼️", "Photo editing"]]],
+import { getT } from "../i18n.js";
+const t = getT(Astro).services;
+// tag backgrounds per card as [bg image, background-position?, live site?]; titles, texts and labels come from i18n in the same order
+const tags = [
+  [["product-shoot.webp"], ["reels-tag.webp", "center 42%"], ["video-tag.webp", "center 44%"], ["motion-tag.webp", "center 30%"]],
+  [["landing-tag.webp", "left center", "https://amreltanany.github.io/apex-nine-racing/"], ["business-tag.webp", "center top", "https://qaro2a.com/"], ["store-tag.webp", "center 66%;background-size:190%", "https://amreltanany.github.io/sneakers/"], ["responsive-tag.webp", "center 30%", "https://amreltanany.github.io/MeridianBuild/"], ["speed-tag.webp", "center top", "https://samconstructions-eg.com/"], ["maintenance-tag.webp", "center 20%", "https://amreltanany.github.io/ronin/"]],
+  [["logo-folio.png", "center 30%"], ["tag-social.webp", "center"], ["tag-ads.webp", "center top"], ["tag-brand.webp", "center"], ["tag-packaging.webp", "center"], ["tag-photo.webp", "center"]],
 ];
-// work samples per card as { src, alt, href? } (href opens the live site in a new tab), { embed, alt } (Behance player) or { reels: [{ src, alt }] } (vertical images in one row); a card shows at least two frames, missing ones keep the placeholder
+// work samples per card as { src, href? } (href opens the live site in a new tab), { embed } (Behance player) { reels: [{ src }] } (vertical images in one row) or { posters: [{ src }] } (whole uncropped images, two per row, a lone last one full width); a card shows at least two frames, missing ones keep the placeholder. Alt texts come from i18n in reading order.
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const a = t.cards.map((c) => c.alts);
 const photos = [
   [
-    { embed: "https://www.behance.net/embed/project/243523649?ilo0=1", alt: "Video editing project by Cairo Creatives on Behance" },
-    { embed: "https://www.behance.net/embed/project/251299651?ilo0=1", alt: "Reels Saudi Arabia project on Behance" },
+    { embed: "https://www.behance.net/embed/project/243523649?ilo0=1", alt: a[0][0] },
+    { embed: "https://www.behance.net/embed/project/251299651?ilo0=1", alt: a[0][1] },
     { reels: [
-      { src: `${base}/images/work/reel-1.webp`, alt: "Vertical video edit for a photography studio" },
-      { src: `${base}/images/work/reel-2.webp`, alt: "Vertical video edit with an editing tutorial" },
-      { src: `${base}/images/work/reel-3.webp`, alt: "Vertical video edit for a promotional offer" },
+      { src: `${base}/images/work/reel-1.webp`, alt: a[0][2] },
+      { src: `${base}/images/work/reel-2.webp`, alt: a[0][3] },
+      { src: `${base}/images/work/reel-3.webp`, alt: a[0][4] },
     ] },
   ],
   [
-    { src: `${base}/images/work/display-egypt.webp`, alt: "Display Egypt website built by Cairo Creatives", href: "https://displayegypt.com/" },
-    { src: `${base}/images/work/switch-on.webp`, alt: "Switch On online store built by Cairo Creatives", href: "https://amreltanany.github.io/Switch-On/" },
-    { src: `${base}/images/work/taj.webp`, alt: "TAJ dental clinic website built by Cairo Creatives", href: "https://tajclinics-7f4tfgfb.manus.space/" },
+    { src: `${base}/images/work/display-egypt.webp`, alt: a[1][0], href: "https://displayegypt.com/" },
+    { src: `${base}/images/work/switch-on.webp`, alt: a[1][1], href: "https://amreltanany.github.io/Switch-On/" },
+    { src: `${base}/images/work/taj.webp`, alt: a[1][2], href: "https://tajclinics-7f4tfgfb.manus.space/" },
   ],
-  [],
+  [
+    { posters: [
+      { src: `${base}/images/work/design-italy.webp`, alt: a[2][0] },
+      { src: `${base}/images/work/design-delivery.webp`, alt: a[2][1] },
+      { src: `${base}/images/work/design-clock.webp`, alt: a[2][2] },
+    ] },
+  ],
 ];
 ---
 <section class="services" id="services">
   <div class="wrap">
-    <div class="head rv"><div class="tag">Services</div><h2 class="h2">What we do, start to finish</h2></div>
+    <div class="head rv"><div class="tag">{t.tag}</div><h2 class="h2">{t.title}</h2></div>
     <div>
-      {services.map(([title, text, items], i) => (
+      {t.cards.map(({ title, text, tags: labels }, i) => (
         <div class="svc">
           <div class="txt rv">
             <div><h3>{title}</h3><p>{text}</p></div>
-            <ul>{items.map(([icon, label, bg, pos, href]) => bg
-              ? <li class="pill has-bg" style={`background-image:linear-gradient(0deg,rgba(0,8,30,.94) 12%,rgba(0,8,30,.72) 42%,rgba(0,8,30,0) 82%),url(${base}/images/work/${bg})${pos ? `;background-position:${pos}` : ""}`}>{href ? <a href={href} target="_blank" rel="noopener">{label}</a> : label}</li>
-              : <li class="pill"><span aria-hidden="true">{icon}</span>{label}</li>)}</ul>
+            <ul>{tags[i].map(([bg, pos, href], j) => <li class="pill has-bg" style={`background-image:url(${base}/images/work/${bg})${pos ? `;background-position:${pos}` : ""}`}>{href ? <a href={href} target="_blank" rel="noopener">{labels[j]}</a> : <b>{labels[j]}</b>}</li>)}</ul>
           </div>
           <div class="imgs">
-            {[...Array(Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
-              ? (photos[i][k].reels
+            {[...Array(photos[i][0]?.posters ? 1 : Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
+              ? (photos[i][k].posters
+                ? <div class="reels posters">{photos[i][k].posters.map((r) => <div class="ph reveal photo poster"><img src={r.src} alt={r.alt} loading="lazy" /></div>)}</div>
+                : photos[i][k].reels
                 ? <div class="reels">{photos[i][k].reels.map((r) => <div class="ph reveal photo reel"><img src={r.src} alt={r.alt} loading="lazy" /></div>)}</div>
                 : photos[i][k].embed
                 ? <div class="ph reveal embed"><iframe src={photos[i][k].embed} title={photos[i][k].alt} loading="lazy" scrolling="no" allowfullscreen allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
                 : photos[i][k].href
-                ? <a class="ph reveal photo" href={photos[i][k].href} target="_blank" rel="noopener"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /><span class="visit">Visit site ↗</span></a>
+                ? <a class="ph reveal photo" href={photos[i][k].href} target="_blank" rel="noopener"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /><span class="visit">{t.visit}</span></a>
                 : <div class="ph reveal photo"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /></div>)
               : <div class={`ph reveal ${k === 0 ? (i % 2 ? "cool" : "warm") : ""}`}></div>)}
           </div>

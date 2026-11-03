@@ -1,3 +1,7 @@
+---
+import { getT } from "../i18n.js";
+const t = getT(Astro);
+---
 <header class="hero">
   <svg class="scene layer" data-k="0.4" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
     <defs>
@@ -53,7 +57,7 @@
     </g>
   </svg>
   <div class="hero-bottom">
-    <h1>Your<span class="swap" id="swap"></span>Agency <span class="star">✱</span></h1>
-    <p>Your vision, our creativity</p>
+    <h1>{t.hero.before}<span class="swap" id="swap" data-words={t.hero.words.join("|")}></span>{t.hero.after} <span class="star">✱</span></h1>
+    <p>{t.hero.line}</p>
   </div>
 </header>

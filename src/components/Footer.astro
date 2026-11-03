@@ -1,9 +1,14 @@
+---
+import { getT } from "../i18n.js";
+const t = getT(Astro).footer;
+const hrefs = ["#", "#intro", "#services", "#pricing", "#faq", "#contact"];
+---
 <footer>
   <div class="bg"></div>
   <div class="fcols">
-    <p>Placeholder one-liner about who you are and what you stand for.</p>
-    <div class="nav"><h6>NAVIGATION</h6><a href="#">Home</a><a href="#intro">About</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#contact">Contact us</a></div>
-    <div class="soc"><h6>CONNECT</h6><a href="#">LinkedIn</a><a href="#">Instagram</a><a href="#">YouTube</a></div>
+    <p>{t.line}</p>
+    <div class="nav"><h6>{t.nav}</h6>{t.links.map((label, i) => <a href={hrefs[i]}>{label}</a>)}</div>
+    <div class="soc"><h6>{t.connect}</h6><a href="#">LinkedIn</a><a href="#">Instagram</a><a href="#">YouTube</a></div>
   </div>
-  <div class="wordmark">Cairo Creatives</div>
+  <div class="wordmark" lang="en" dir="ltr">Cairo Creatives</div>
 </footer>

@@ -1,3 +1,7 @@
+---
+import { getT } from "../i18n.js";
+const t = getT(Astro).intro;
+---
 <section class="intro" id="intro">
   <div class="intro-reveal" aria-hidden="true">
     <video class="intro-bg" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260324_151826_c7218672-6e92-402c-9e45-f1e0f454bdc4.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
@@ -10,9 +14,9 @@
     </svg>
   </div>
   <div class="card">
-    <div class="tag">Who we are</div>
-    <div class="big" id="litText">We make content people stop scrolling for</div>
-    <p class="lead">We shoot, design, edit and build for brands that want to be noticed. Every photo, video and web page we make has one job: bring you more attention and more customers.</p>
-    <a href="#" class="btn dark"><span class="roll"><span data-t="Know more about us">Know more about us</span></span></a>
+    <div class="tag">{t.tag}</div>
+    <div class="big" id="litText">{t.big}</div>
+    <p class="lead">{t.lead}</p>
+    <a href="#" class="btn dark"><span class="roll"><span data-t={t.more}>{t.more}</span></span></a>
   </div>
 </section>

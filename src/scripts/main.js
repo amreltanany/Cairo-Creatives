@@ -5,6 +5,8 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 document.documentElement.classList.add('gsap');
 const $ = (id) => document.getElementById(id);
+// Arabic letters join, so letter-by-letter effects work on whole words there
+const AR = document.documentElement.lang === 'ar';
 
 // smooth scroll: always on (ignores the OS reduce-motion setting).
 // Lenis runs on GSAP's ticker so scroll-linked tweens and the page move on the same frame (no jitter).
@@ -31,7 +33,7 @@ document.addEventListener('click', (e) => {
 document.querySelectorAll('.roll').forEach((r) => {
   const t = r.textContent.trim();
   r.setAttribute('aria-label', t);
-  r.innerHTML = [...t].map((c, i) => `<span class="ch" aria-hidden="true" style="--i:${i}">${c}</span>`).join('');
+  r.innerHTML = (AR ? [t] : [...t]).map((c, i) => `<span class="ch" aria-hidden="true" style="--i:${i}">${c}</span>`).join('');
 });
 
 // hero scene: Cairo Tower + Qasr el Nil at night (stars, skyline, bridge lamps, reflections)
@@ -71,9 +73,9 @@ for (let i = 0; i < 30; i++) {
 
 // hero word swap, letter by letter
 const swap = $('swap');
-const words = ['Branding', 'Marketing', 'Creative'];
+const words = swap.dataset.words.split('|');
 let wi = 0;
-swap.innerHTML = words.map((w) => `<span class="w">${[...w].map((c, j) => `<i style="transition-delay:${j * 35}ms">${c}</i>`).join('')}</span>`).join('');
+swap.innerHTML = words.map((w) => `<span class="w">${(AR ? [w] : [...w]).map((c, j) => `<i style="transition-delay:${j * 35}ms">${c}</i>`).join('')}</span>`).join('');
 const ws = [...swap.children];
 ws[0].classList.add('on');
 swap.style.width = Math.max(...ws.map((w) => w.scrollWidth)) + 'px';
@@ -96,7 +98,7 @@ setInterval(() => {
 
 // scroll-lit headline
 const litText = $('litText');
-litText.innerHTML = litText.textContent.split('').map((c) => `<span>${c}</span>`).join('');
+litText.innerHTML = litText.textContent.split(AR ? /(\s+)/ : '').map((c) => `<span>${c}</span>`).join('');
 const lit = [...litText.children];
 
 // --- everything that follows the scroll runs in ONE handler, from cached sizes (no layout reads per frame)
@@ -187,7 +189,7 @@ const setMenu = (open) => {
   menu.classList.toggle('open', open);
   menu.setAttribute('aria-hidden', !open);
   burger.setAttribute('aria-expanded', open);
-  burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  burger.setAttribute('aria-label', open ? burger.dataset.close : burger.dataset.open);
   open ? lenis.stop() : lenis.start();
   if (open) menu.querySelector('a').focus();
 };
@@ -203,12 +205,101 @@ form.onsubmit = (e) => {
   e.preventDefault();
   const b = form.querySelector('button');
   b.disabled = true;
-  b.textContent = 'Sending…';
-  setTimeout(() => { b.textContent = 'Sent'; formMsg.textContent = "Thanks, we'll be in touch soon."; form.reset(); }, 800);
+  b.textContent = form.dataset.sending;
+  setTimeout(() => { b.textContent = form.dataset.sent; formMsg.textContent = form.dataset.thanks; form.reset(); }, 800);
 };
 
+// pricing slider: side cards, swipe and arrow keys all move the same index
+const pslider = document.querySelector('.pslider'), pcards = [...pslider.querySelectorAll('.pcard')], pn = pcards.length;
+let pi = 2, pStart = null, pSwiped = false;
+const pgo = (i) => {
+  pi = (i + pn) % pn;
+  pcards.forEach((c, k) => {
+    const p = ((k - pi + pn + 2) % pn) - 2;
+    c.dataset.p = p;
+    c.querySelectorAll('a,input,select,button,summary').forEach((n) => { n.tabIndex = p ? -1 : 0; });
+    // a card that slides away closes its add-ons panel
+    if (p) c.querySelectorAll('details[open]').forEach((d) => { d.open = false; });
+  });
+};
+// a swipe ends in a click on the card it started on: skip that click or it undoes the swipe
+pcards.forEach((c, k) => c.addEventListener('click', () => { if (k !== pi && !pSwiped) pgo(k); }));
+// a press that starts on a form, the add-ons panel or the calculator is for picking or selecting text, never a swipe
+pslider.addEventListener('pointerdown', (e) => {
+  pStart = e.target.closest('input,select,summary,label,.ppanel,.pcalc,.prange') ? null : e.clientX;
+  pSwiped = false;
+});
+pslider.addEventListener('pointerup', (e) => {
+  if (pStart == null) return;
+  const dx = e.clientX - pStart;
+  pStart = null;
+  pSwiped = Math.abs(dx) > 40;
+  if (pSwiped) pgo(pi + (dx < 0 ? 1 : -1));
+});
+pslider.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') pgo(pi + 1);
+  if (e.key === 'ArrowLeft') pgo(pi - 1);
+});
+pgo(pi);
+
+// accounts range: every account after the first adds 80% of the one-account price; the contents stay fixed
+const PER_ACCOUNT = 0.8, accountsPrice = (base, n) => (n && base * (1 + (n - 1) * PER_ACCOUNT));
+const pcalcCount = (i) => Math.min(+i.max, Math.max(0, Math.floor(+i.value) || 0));
+
+// plan cards: price = plan (times the accounts range on Accounts) + monthly add-ons; one-time add-ons get their own
+// green line, and every add-on shows in green on the card (+n next to its list line, or a named chip)
+pslider.querySelectorAll('.pcard.dense').forEach((card) => {
+  const strong = card.querySelector('.pprice strong'), range = card.querySelector('.prange input'), count = card.querySelector('.prange output');
+  const adds = [...card.querySelectorAll('.ppanel input')], once = card.querySelector('.ponce');
+  const run = () => {
+    let monthly = accountsPrice(+strong.dataset.base, range ? +range.value : 1), oneTime = 0;
+    adds.forEach((i) => {
+      const n = i.type === 'checkbox' ? +i.checked : pcalcCount(i), cost = n * i.dataset.price;
+      if ('once' in i.dataset) oneTime += cost; else monthly += cost;
+      const mark = card.querySelector(`[data-for="${i.name}"]`);
+      mark.hidden = !n;
+      if (i.type === 'number') mark.textContent = `+${n}`;
+    });
+    if (count) count.textContent = range.value;
+    strong.textContent = Math.round(monthly);
+    once.hidden = !oneTime;
+    once.querySelector('b').textContent = oneTime;
+  };
+  card.addEventListener('input', run);
+  card.addEventListener('change', () => adds.forEach((i) => { if (i.type === 'number') i.value = pcalcCount(i); }));
+  card.querySelector('.pdone').onclick = () => { card.querySelector('.padds').open = false; };
+  run();
+});
+
+// custom plan calculator: accounts follow the Accounts plan rule, counts are count x unit price,
+// each select adds its chosen option's value and each ticked box its price
+const pcalc = pslider.querySelector('.pcalc'), pcalcInputs = [...pcalc.querySelectorAll('input[type=number]')];
+const pcalcSelects = [...pcalc.querySelectorAll('select')], pcalcChecks = [...pcalc.querySelectorAll('input[type=checkbox]')];
+const pcalcTotal = pcalc.closest('.pcard').querySelector('.pprice strong'), pcalcOnce = pcalc.closest('.pcard').querySelector('.ponce');
+const pcalcRun = () => {
+  // one-time choices (website, visual identity) get the green line; everything else is the monthly price
+  let total = 0, oneTime = 0;
+  const add = (n, cost) => { if ('once' in n.dataset) oneTime += cost; else total += cost; };
+  pcalcSelects.forEach((n) => add(n, +n.value));
+  pcalcChecks.forEach((n) => add(n, n.checked ? +n.dataset.price : 0));
+  pcalcInputs.forEach((i) => {
+    const n = pcalcCount(i), cost = +i.dataset.price;
+    total += i.name === 'accounts' ? accountsPrice(cost, n) : n * cost;
+  });
+  pcalcTotal.textContent = Math.round(total);
+  pcalcOnce.hidden = !oneTime;
+  pcalcOnce.querySelector('b').textContent = oneTime;
+};
+pcalc.addEventListener('input', pcalcRun);
+// fix an out-of-range number in its box once typing ends, not on every keystroke
+pcalc.addEventListener('change', () => pcalcInputs.forEach((i) => { i.value = pcalcCount(i); }));
+pcalcRun();
+
+// arrow keys in a form control move its value or cursor, not the slider
+pslider.querySelectorAll('input,select,summary').forEach((n) => n.addEventListener('keydown', (e) => e.stopPropagation()));
+
 // fade-up reveal on view
-const io = new IntersectionObserver((es) => es.forEach((e) => {
+const io =new IntersectionObserver((es) => es.forEach((e) => {
   if (!e.isIntersecting) return;
   e.target.classList.add('in');
   io.unobserve(e.target);
