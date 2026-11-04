@@ -2,57 +2,65 @@
 import { getT } from "../i18n.js";
 const t = getT(Astro);
 const p = t.pricing;
+// ponytail: price of one account in the Custom calculator, a placeholder until the client prices it
 const price = 1000;
-// [id, icon path, package?]; names and lines come from i18n by id. A package is
-// [post designs, reels, captions, platforms, moderation hours a day, revisions, shooting included] and fills the
-// shared content list. Only Accounts has the accounts range, which scales its price; the middle plan starts in front
+// one price list for every card. From the client's list: post, reel, campaigns, website (yearly), identity. ponytail: the rest are placeholders until the client prices them.
+const rate = { post: 150, reel: 600, campaigns: 4000, website: 5000, identity: 3000,
+  platform: 200, shooting: 2000, video: 150, moderation: 3000 };
+// [id, icon path, package?, fixed price?, everything?]; names and lines come from i18n by id. A fixed price is the client's package
+// price (START 3000, GROW 5000, SCALE 10000); without one the plan costs the sum of what it contains. A package is
+// [post designs, reels, platforms, shooting included] and fills the shared content list.
+// Partners has everything: SCALE plus every add-on listed as included, priced as SCALE + the monthly add-ons
+// (website and visual identity come with it). Only Accounts has the accounts range; the middle plan starts in front
 const plans = [
-  ["partners", "M12 3l2.700 5.800 6.300.800-4.600 4.300 1.200 6.200L12 17l-5.600 3.100 1.200-6.200L3 9.600l6.300-.800L12 3Z", [20, 6, 20, 4, 3, 4, true]],
-  ["accounts", "M3 17l6-6 4 4 8-8M15 7h6v6", [8, 2, 8, 2, 1, 2, false]],
+  ["partners", "M12 3l2.700 5.800 6.300.800-4.600 4.300 1.200 6.200L12 17l-5.600 3.100 1.200-6.200L3 9.600l6.300-.800L12 3Z", [20, 6, 4, true], 10000 + rate.moderation + rate.campaigns, true],
+  ["accounts", "M3 17l6-6 4 4 8-8M15 7h6v6", [8, 2, 2, false], 3000],
   ["custom", "M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4M16 4v4M8 10v4M14 16v4"],
-  ["web", "M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16", [12, 4, 12, 3, 2, 3, false]],
-  ["design", "M12 3l9 9-9 9-9-9 9-9Zm0 5v8M8 12h8", [16, 5, 16, 3, 2, 3, true]],
+  ["web", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3ZM8.5 12l2.5 2.5 4.5-5", [12, 4, 3, false], 5000],
+  ["design", "M12 21v-9M12 12c0-4 3-7 8-7 0 5-3 7-8 7ZM12 15c0-3-2.500-5-7-5 0 4 2.500 5 7 5M8 21h8", [20, 6, 3, true], 10000],
 ];
-const detailValues = ([, , , platforms, hours, revisions, shoot]) => [platforms, p.hours(hours), revisions, p.footage[shoot ? 1 : 0]];
-// add-ons on every plan card: [name, unit price, per-unit label?, one-time?]; counts go next to the matching list line in green
+const detailValues = ([, , platforms, shoot]) => [platforms, p.footage[shoot ? 1 : 0]];
+// a plan costs the sum of what it contains
+const packPrice = ([posts, reels, platforms, shoot]) =>
+  posts * rate.post + reels * rate.reel + platforms * rate.platform + (shoot ? rate.shooting : 0);
+// add-ons on every plan card: [name, unit price, per-unit label?, bill?] where bill is "year" or "once" (else monthly); counts go next to the matching list line in green
 const ad = p.addons;
 // Custom calculator unit prices (the accounts row uses `price` with the same per-account rule as the Accounts plan):
-// [field, unit price, max] per count (posts and reels at the extra-post and extra-reel prices), website types from the
-// 6000 starting price, the shooting surcharge on the footage choice, and yes/no services as [label, price, one-time?]
-const rates = [["designs", 150, 99], ["reels", 700, 99], ["captions", 50, 99], ["videos", 800, 99], ["platforms", 200, 10], ["hours", 1500, 12], ["revisions", 100, 20]];
-const sites = [0, 6000, 8000, 12000];
-const shooting = 2000;
-const extras = [[p.items[3], 500], [ad.care, 2500], [ad.campaigns, 4000], [ad.identity, 3000, true]];
+// [field, unit price, max] per count (posts and reels at the extra-post and extra-reel prices), the shooting surcharge
+// on the footage choice, and the add-ons as yes/no boxes [label, price, bill?, note?] (bill: "year" or "once", else monthly)
+const rates = [["designs", rate.post, 99], ["reels", rate.reel, 99], ["videos", rate.video, 99], ["platforms", rate.platform, 10]];
+const shooting = rate.shooting;
+const extras = [[ad.moderation, rate.moderation], [ad.campaigns, rate.campaigns, undefined, ad.noSpend], [ad.website, rate.website, "year"], [ad.identity, rate.identity, "once"]];
 const f = p.plans.custom.fields;
-const counted = [["reels", 700, ad.perReel], ["posts", 150, ad.perPost]];
-const toggles = [["campaigns", 4000, p.monthly, false], ["website", 6000, ad.oneTime, true], ["identity", 3000, ad.oneTime, true]];
+const counted = [["reels", rate.reel, ad.perReel], ["posts", rate.post, ad.perPost]];
+const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.campaigns, p.monthly], ["website", rate.website, ad.yearly, "year"], ["identity", rate.identity, ad.oneTime, "once"]];
 ---
 <section class="pricing" id="pricing">
   <div class="wrap">
     <div class="tag">{p.tag}</div>
     <h2 class="h2 rv">{p.title[0]}<br><span class="dim">{p.title[1]}</span></h2>
     <div class="pslider rv" dir="ltr" role="region" aria-label={p.region} tabindex="0">
-      {plans.map(([id, icon, pack], i) => {
-        const plan = p.plans[id], ranged = id === "accounts";
+      {plans.map(([id, icon, pack, fixed, all], i) => {
+        const plan = p.plans[id], ranged = id === "accounts", planPrice = pack && (fixed ?? packPrice(pack));
         return (
           <article class:list={["pcard", { custom: !pack, dense: pack }]} data-p={i - 2} dir={t.dir}>
             <span class="picon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icon} /></svg></span>
             <h3>{plan.name}</h3>
-            <p class="pprice"><strong data-base={pack ? price : undefined}>{price}</strong> {p.currency} <small>{p.monthly}</small></p>
+            <p class="pprice"><strong data-base={pack ? planPrice : undefined}>{pack ? planPrice : price}</strong> {p.currency} <small>{p.monthly}</small></p>
             <p class="pline">{plan.line}</p>
-            <p class="pextra">{pack && toggles.map(([name]) => <span data-for={name} hidden>+ {ad.chips[name]}</span>)}<span class="ponce" hidden>+ <b>0</b> {p.currency} {ad.oneTime}</span></p>
+            <p class="pextra">{pack && !all && toggles.map(([name]) => <span data-for={name} hidden>+ {ad.chips[name]}</span>)}<span class="pyear" hidden>+ <b>0</b> {p.currency} {ad.yearly}</span><span class="ponce" hidden>+ <b>0</b> {p.currency} {ad.oneTime}</span></p>
             {ranged && <label class="prange"><span>{p.accounts} <output>1</output></span><input type="range" min="1" max="10" value="1" /></label>}
             {pack
               ? <ul>
-                  {p.items.map((item, k) => <li><span>{k < 3 && <><b>{pack[k]}</b> </>}{item}{k < 2 && <em class="padd" dir="ltr" data-for={k ? "reels" : "posts"} hidden></em>}</span></li>)}
+                  {p.items.map((item, k) => <li><span>{k < 2 && <><b>{pack[k]}</b> </>}{item}{k < 2 && <em class="padd" dir="ltr" data-for={k ? "reels" : "posts"} hidden></em>}</span></li>)}
                   {detailValues(pack).map((value, k) => <li><span>{p.details[k]}: <b>{value}</b></span></li>)}
+                  {all && toggles.map(([name]) => <li><span>{ad[name]}{name === "campaigns" && <small> ({ad.noSpend})</small>}</span></li>)}
                 </ul>
               : <div class="pcalc" data-lenis-prevent>
-                  <label>{f.accounts} <input type="number" name="accounts" min="0" max="10" value="1" data-price={price} /></label>
-                  <label>{f.website} <select name="website" data-once>{sites.map((cost, k) => <option value={cost}>{plan.sites[k]}</option>)}</select></label>
-                  {rates.map(([field, cost, max]) => <label>{f[field]} <input type="number" name={field} min="0" max={max} value="0" data-price={cost} /></label>)}
-                  <label>{f.footage} <select name="footage">{p.footage.map((label, k) => <option value={k * shooting}>{label}</option>)}</select></label>
-                  {extras.map(([label, cost, once]) => <label class="pcheck"><input type="checkbox" data-price={cost} data-once={once ? "" : undefined} /> {label}</label>)}
+                  <label><span>{f.accounts}<small>{plan.accountsNote(price, price * 0.8, p.currency)}</small></span><input type="number" name="accounts" min="0" max="10" value="1" data-price={price} /></label>
+                  {rates.map(([field, cost, max]) => <label><span>{f[field]}<small>{cost} {p.currency} {plan.per[field]}</small></span><input type="number" name={field} min="0" max={max} value="0" data-price={cost} /></label>)}
+                  <label><span>{f.footage}<small>{plan.shootNote(shooting, p.currency)}</small></span><select name="footage">{p.footage.map((label, k) => <option value={k * shooting}>{label}</option>)}</select></label>
+                  {extras.map(([label, cost, bill, note]) => <label class="pcheck"><input type="checkbox" data-price={cost} data-bill={bill} /><span>{label}<small>{cost} {p.currency} {bill === "year" ? ad.yearly : bill ? ad.oneTime : p.monthly}{note && ` · ${note}`}</small></span></label>)}
                 </div>}
             <div class="pfoot">
               {pack && <details class="padds">
@@ -60,7 +68,7 @@ const toggles = [["campaigns", 4000, p.monthly, false], ["website", 6000, ad.one
                 <div class="ppanel">
                   <strong>{ad.title}</strong>
                   {counted.map(([name, cost, per]) => <label><span>{ad[name]}<small>{cost} {p.currency} {per}</small></span><input type="number" name={name} min="0" max="20" value="0" data-price={cost} /></label>)}
-                  {toggles.map(([name, cost, per, once]) => <label class="pcheck"><input type="checkbox" name={name} data-price={cost} data-once={once ? "" : undefined} /><span>{ad[name]}<small>{name === "website" && `${ad.from} `}{cost} {p.currency} {per}</small></span></label>)}
+                  {!all && toggles.map(([name, cost, per, bill]) => <label class="pcheck"><input type="checkbox" name={name} data-price={cost} data-bill={bill} /><span>{ad[name]}<small>{cost} {p.currency} {per}{name === "campaigns" && ` · ${ad.noSpend}`}</small></span></label>)}
                   <button type="button" class="pdone">{ad.done}</button>
                 </div>
               </details>}

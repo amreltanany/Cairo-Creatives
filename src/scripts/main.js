@@ -246,24 +246,31 @@ pgo(pi);
 const PER_ACCOUNT = 0.8, accountsPrice = (base, n) => (n && base * (1 + (n - 1) * PER_ACCOUNT));
 const pcalcCount = (i) => Math.min(+i.max, Math.max(0, Math.floor(+i.value) || 0));
 
-// plan cards: price = plan (times the accounts range on Accounts) + monthly add-ons; one-time add-ons get their own
-// green line, and every add-on shows in green on the card (+n next to its list line, or a named chip)
+// non-monthly add-ons (data-bill: year or once) each get their own green line under the price
+const showBills = (card, sums) => ['year', 'once'].forEach((bill) => {
+  const line = card.querySelector(bill === 'year' ? '.pyear' : '.ponce');
+  line.hidden = !sums[bill];
+  line.querySelector('b').textContent = sums[bill];
+});
+
+// plan cards: price = plan (times the accounts range on Accounts) + monthly add-ons; yearly and one-time add-ons get
+// their own green lines, and every add-on shows in green on the card (+n next to its list line, or a named chip)
 pslider.querySelectorAll('.pcard.dense').forEach((card) => {
   const strong = card.querySelector('.pprice strong'), range = card.querySelector('.prange input'), count = card.querySelector('.prange output');
-  const adds = [...card.querySelectorAll('.ppanel input')], once = card.querySelector('.ponce');
+  const adds = [...card.querySelectorAll('.ppanel input')];
   const run = () => {
-    let monthly = accountsPrice(+strong.dataset.base, range ? +range.value : 1), oneTime = 0;
+    let monthly = accountsPrice(+strong.dataset.base, range ? +range.value : 1);
+    const sums = { year: 0, once: 0 };
     adds.forEach((i) => {
       const n = i.type === 'checkbox' ? +i.checked : pcalcCount(i), cost = n * i.dataset.price;
-      if ('once' in i.dataset) oneTime += cost; else monthly += cost;
+      if (i.dataset.bill) sums[i.dataset.bill] += cost; else monthly += cost;
       const mark = card.querySelector(`[data-for="${i.name}"]`);
       mark.hidden = !n;
       if (i.type === 'number') mark.textContent = `+${n}`;
     });
     if (count) count.textContent = range.value;
     strong.textContent = Math.round(monthly);
-    once.hidden = !oneTime;
-    once.querySelector('b').textContent = oneTime;
+    showBills(card, sums);
   };
   card.addEventListener('input', run);
   card.addEventListener('change', () => adds.forEach((i) => { if (i.type === 'number') i.value = pcalcCount(i); }));
@@ -275,11 +282,12 @@ pslider.querySelectorAll('.pcard.dense').forEach((card) => {
 // each select adds its chosen option's value and each ticked box its price
 const pcalc = pslider.querySelector('.pcalc'), pcalcInputs = [...pcalc.querySelectorAll('input[type=number]')];
 const pcalcSelects = [...pcalc.querySelectorAll('select')], pcalcChecks = [...pcalc.querySelectorAll('input[type=checkbox]')];
-const pcalcTotal = pcalc.closest('.pcard').querySelector('.pprice strong'), pcalcOnce = pcalc.closest('.pcard').querySelector('.ponce');
+const pcalcCard = pcalc.closest('.pcard'), pcalcTotal = pcalcCard.querySelector('.pprice strong');
 const pcalcRun = () => {
-  // one-time choices (website, visual identity) get the green line; everything else is the monthly price
-  let total = 0, oneTime = 0;
-  const add = (n, cost) => { if ('once' in n.dataset) oneTime += cost; else total += cost; };
+  // yearly (website) and one-time (visual identity) choices get the green lines; everything else is the monthly price
+  let total = 0;
+  const sums = { year: 0, once: 0 };
+  const add = (n, cost) => { if (n.dataset.bill) sums[n.dataset.bill] += cost; else total += cost; };
   pcalcSelects.forEach((n) => add(n, +n.value));
   pcalcChecks.forEach((n) => add(n, n.checked ? +n.dataset.price : 0));
   pcalcInputs.forEach((i) => {
@@ -287,8 +295,7 @@ const pcalcRun = () => {
     total += i.name === 'accounts' ? accountsPrice(cost, n) : n * cost;
   });
   pcalcTotal.textContent = Math.round(total);
-  pcalcOnce.hidden = !oneTime;
-  pcalcOnce.querySelector('b').textContent = oneTime;
+  showBills(pcalcCard, sums);
 };
 pcalc.addEventListener('input', pcalcRun);
 // fix an out-of-range number in its box once typing ends, not on every keystroke

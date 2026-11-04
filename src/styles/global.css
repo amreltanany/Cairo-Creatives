@@ -183,12 +183,24 @@ nav{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:c
 .custom a{background:var(--navy);border-color:var(--navy);color:#fff}
 /* more choices than the card has room for: the list scrolls inside the card (data-lenis-prevent lets the wheel reach it) */
 .pcalc{flex:1;min-height:0;align-self:stretch;display:grid;align-content:start;gap:.55em;margin-top:.2em;padding:.6em .4em .6em 0;border-top:1px solid rgba(0,18,51,.3);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--navy) transparent}
-.pcalc .pcheck{justify-content:flex-start}
-.pcalc .pcheck input{width:1.1em;height:1.1em;flex:none;accent-color:var(--navy)}
+/* checkboxes sit at the end of the row like the other fields (right in English, left in Arabic): soft navy squares, ticked = navy with an amber mark */
+.pcalc .pcheck{flex-direction:row-reverse;justify-content:space-between}
+.pcalc .pcheck input{appearance:none;width:1.35em;height:1.35em;flex:none;margin:0;border:1px solid rgba(0,18,51,.35);border-radius:.4em;background:rgba(0,18,51,.12) center/80% no-repeat;cursor:pointer;transition:background-color .2s,border-color .2s}
+.pcalc .pcheck input:hover{background-color:rgba(0,18,51,.2)}
+.pcalc .pcheck input:checked{border-color:var(--navy);background-color:var(--navy);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffc64d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.500'/%3E%3C/svg%3E")}
+.pcalc .pcheck input:focus-visible{box-shadow:0 0 0 .2em rgba(0,18,51,.25)}
+.pcalc small{display:block;margin-top:.1em;font-size:.8em;font-weight:500;opacity:.7}
 .pcalc label{display:flex;align-items:center;justify-content:space-between;gap:.6em;font-size:.82em;font-weight:600;text-align:start}
-.pcalc :is(input,select){padding:.3em .4em;border:1px solid rgba(0,18,51,.4);border-radius:.4em;background:#fff;color:var(--navy);font:inherit;user-select:text}
-.pcalc input{width:4.2em;text-align:center}
-.pcalc select{width:12em}
+/* fields on the amber card: soft navy wells instead of white boxes, a navy ring on focus */
+.pcalc :is(input[type=number],select){height:2.1em;padding:0 .6em;border:1px solid transparent;border-radius:.7em;background:rgba(0,18,51,.12);color:var(--navy);font:inherit;font-weight:700;outline:0;transition:background .2s,border-color .2s,box-shadow .2s;user-select:text}
+.pcalc :is(input[type=number],select):hover{background-color:rgba(0,18,51,.18)}
+.pcalc :is(input[type=number],select):focus{background-color:rgba(255,255,255,.55);border-color:var(--navy);box-shadow:0 0 0 .2em rgba(0,18,51,.15)}
+.pcalc input[type=number]{width:3.6em;text-align:center}
+/* select[name] outranks the shared field rule above, whose background shorthand would wipe the arrow */
+.pcalc select[name]{width:12em;appearance:none;padding-inline-end:2em;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23001233' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-size:.9em;background-position:right .6em center}
+[dir="rtl"] .pcalc select[name]{background-position:left .6em center}
+.custom .pextra{color:#0b6b3a}
+.pcalc option{background:#fff;color:var(--navy);font-weight:500}
 .prange{align-self:stretch;display:grid;gap:.3em;font-size:.8em;font-weight:600}
 .prange input{width:100%;accent-color:#5ec8ff;cursor:pointer}
 .pcard li b{color:#5ec8ff}
@@ -358,3 +370,5 @@ html[lang="ar"] .swap{height:1.3em}
 .pcalc::-webkit-scrollbar-track{background:transparent}
 .pcalc::-webkit-scrollbar-thumb{background:var(--navy);border:0;border-radius:999px}
 .pcalc::-webkit-scrollbar-button{display:none;height:0}
+/* add-on checkboxes sit at the end of the row like the number boxes (right in English, left in Arabic) */
+.ppanel label.pcheck{flex-direction:row-reverse;justify-content:space-between}
