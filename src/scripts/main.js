@@ -199,16 +199,6 @@ addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); }
 });
 
-// contact form: no backend yet, so just show the sending → done states
-const form = $('contactForm'), formMsg = $('formMsg');
-form.onsubmit = (e) => {
-  e.preventDefault();
-  const b = form.querySelector('button');
-  b.disabled = true;
-  b.textContent = form.dataset.sending;
-  setTimeout(() => { b.textContent = form.dataset.sent; formMsg.textContent = form.dataset.thanks; form.reset(); }, 800);
-};
-
 // pricing slider: side cards, swipe and arrow keys all move the same index
 const pslider = document.querySelector('.pslider'), pcards = [...pslider.querySelectorAll('.pcard')], pn = pcards.length;
 let pi = 2, pStart = null, pSwiped = false;
@@ -284,20 +274,29 @@ const pcalc = pslider.querySelector('.pcalc'), pcalcInputs = [...pcalc.querySele
 const pcalcSelects = [...pcalc.querySelectorAll('select')], pcalcChecks = [...pcalc.querySelectorAll('input[type=checkbox]')];
 const pcalcCard = pcalc.closest('.pcard'), pcalcTotal = pcalcCard.querySelector('.pprice strong');
 const pcalcRun = () => {
-  // yearly (website) and one-time (visual identity) choices get the green lines; everything else is the monthly price
+  // Custom has no separate add-ons: every ticked service, yearly and one-time ones included, counts in the one total
   let total = 0;
-  const sums = { year: 0, once: 0 };
-  const add = (n, cost) => { if (n.dataset.bill) sums[n.dataset.bill] += cost; else total += cost; };
-  pcalcSelects.forEach((n) => add(n, +n.value));
-  pcalcChecks.forEach((n) => add(n, n.checked ? +n.dataset.price : 0));
+  pcalcSelects.forEach((n) => { total += +n.value; });
+  pcalcChecks.forEach((n) => { if (n.checked) total += +n.dataset.price; });
   pcalcInputs.forEach((i) => {
     const n = pcalcCount(i), cost = +i.dataset.price;
     total += i.name === 'accounts' ? accountsPrice(cost, n) : n * cost;
   });
   pcalcTotal.textContent = Math.round(total);
-  showBills(pcalcCard, sums);
 };
 pcalc.addEventListener('input', pcalcRun);
+// accounts starts at 0 but a Custom plan needs at least one: Get started stays put and flags the field until it has one
+const pcalcAccounts = pcalc.querySelector('[name=accounts]'), pcalcNeed = pcalc.querySelector('.perr');
+const pcalcFlag = (on) => { pcalcNeed.hidden = !on; pcalcAccounts.toggleAttribute('aria-invalid', on); };
+pcalcCard.querySelector('.pfoot a').addEventListener('click', (e) => {
+  if (pcalcCount(pcalcAccounts) >= 1) return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  pcalcFlag(true);
+  pcalc.scrollTop = 0;
+  pcalcAccounts.focus();
+});
+pcalcAccounts.addEventListener('input', () => { if (pcalcCount(pcalcAccounts) >= 1) pcalcFlag(false); });
 // fix an out-of-range number in its box once typing ends, not on every keystroke
 pcalc.addEventListener('change', () => pcalcInputs.forEach((i) => { i.value = pcalcCount(i); }));
 pcalcRun();

@@ -5,31 +5,29 @@ const p = t.pricing;
 // ponytail: price of one account in the Custom calculator, a placeholder until the client prices it
 const price = 1000;
 // one price list for every card. From the client's list: post, reel, campaigns, website (yearly), identity. ponytail: the rest are placeholders until the client prices them.
-const rate = { post: 150, reel: 600, campaigns: 4000, website: 5000, identity: 3000,
-  platform: 200, shooting: 2000, video: 150, moderation: 3000 };
+const rate = { post: 150, reel: 600, campaigns: 3000, website: 5000, identity: 3000,
+  platform: 200, video: 150, moderation: 2500 };
 // [id, icon path, package?, fixed price?, everything?]; names and lines come from i18n by id. A fixed price is the client's package
 // price (START 3000, GROW 5000, SCALE 10000); without one the plan costs the sum of what it contains. A package is
-// [post designs, reels, platforms, shooting included] and fills the shared content list.
-// Partners has everything: SCALE plus every add-on listed as included, priced as SCALE + the monthly add-ons
-// (website and visual identity come with it). Only Accounts has the accounts range; the middle plan starts in front
+// [post designs, reels, platforms] and fills the shared content list. Reels are always edited from client footage.
+// Partners has everything: SCALE on all platforms, a monthly content plan and every add-on listed as included, at the client's 20000 price. Only Accounts has the accounts range; the middle plan starts in front
 const plans = [
-  ["partners", "M12 3l2.700 5.800 6.300.800-4.600 4.300 1.200 6.200L12 17l-5.600 3.100 1.200-6.200L3 9.600l6.300-.800L12 3Z", [20, 6, 4, true], 10000 + rate.moderation + rate.campaigns, true],
-  ["accounts", "M3 17l6-6 4 4 8-8M15 7h6v6", [8, 2, 2, false], 3000],
+  ["partners", "M12 3l2.700 5.800 6.300.800-4.600 4.300 1.200 6.200L12 17l-5.600 3.100 1.200-6.200L3 9.600l6.300-.800L12 3Z", [20, 6, "all"], 20000, true],
+  ["accounts", "M3 17l6-6 4 4 8-8M15 7h6v6", [8, 2, 2], 3000],
   ["custom", "M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4M16 4v4M8 10v4M14 16v4"],
-  ["web", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3ZM8.5 12l2.5 2.5 4.5-5", [12, 4, 3, false], 5000],
-  ["design", "M12 21v-9M12 12c0-4 3-7 8-7 0 5-3 7-8 7ZM12 15c0-3-2.500-5-7-5 0 4 2.500 5 7 5M8 21h8", [20, 6, 3, true], 10000],
+  ["web", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3ZM8.5 12l2.5 2.5 4.5-5", [12, 4, 3], 5000],
+  ["design", "M12 21v-9M12 12c0-4 3-7 8-7 0 5-3 7-8 7ZM12 15c0-3-2.500-5-7-5 0 4 2.500 5 7 5M8 21h8", [20, 6, "all"], 10000],
 ];
-const detailValues = ([, , platforms, shoot]) => [platforms, p.footage[shoot ? 1 : 0]];
+// the reels source sits in brackets under the reels line; platforms is its own line
+const detailValues = ([, , platforms]) => [platforms === "all" ? p.allPlatforms : platforms];
 // a plan costs the sum of what it contains
-const packPrice = ([posts, reels, platforms, shoot]) =>
-  posts * rate.post + reels * rate.reel + platforms * rate.platform + (shoot ? rate.shooting : 0);
+const packPrice = ([posts, reels, platforms]) =>
+  posts * rate.post + reels * rate.reel + (platforms === "all" ? 0 : platforms * rate.platform);
 // add-ons on every plan card: [name, unit price, per-unit label?, bill?] where bill is "year" or "once" (else monthly); counts go next to the matching list line in green
 const ad = p.addons;
 // Custom calculator unit prices (the accounts row uses `price` with the same per-account rule as the Accounts plan):
-// [field, unit price, max] per count (posts and reels at the extra-post and extra-reel prices), the shooting surcharge
-// on the footage choice, and the add-ons as yes/no boxes [label, price, bill?, note?] (bill: "year" or "once", else monthly)
+// [field, unit price, max] per count (posts and reels at the extra-post and extra-reel prices), and the add-ons as yes/no boxes [label, price, bill?, note?] (bill: "year" or "once", else monthly)
 const rates = [["designs", rate.post, 99], ["reels", rate.reel, 99], ["videos", rate.video, 99], ["platforms", rate.platform, 10]];
-const shooting = rate.shooting;
 const extras = [[ad.moderation, rate.moderation], [ad.campaigns, rate.campaigns, undefined, ad.noSpend], [ad.website, rate.website, "year"], [ad.identity, rate.identity, "once"]];
 const f = p.plans.custom.fields;
 const counted = [["reels", rate.reel, ad.perReel], ["posts", rate.post, ad.perPost]];
@@ -52,14 +50,15 @@ const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.
             {ranged && <label class="prange"><span>{p.accounts} <output>1</output></span><input type="range" min="1" max="10" value="1" /></label>}
             {pack
               ? <ul>
-                  {p.items.map((item, k) => <li><span>{k < 2 && <><b>{pack[k]}</b> </>}{item}{k < 2 && <em class="padd" dir="ltr" data-for={k ? "reels" : "posts"} hidden></em>}</span></li>)}
-                  {detailValues(pack).map((value, k) => <li><span>{p.details[k]}: <b>{value}</b></span></li>)}
-                  {all && toggles.map(([name]) => <li><span>{ad[name]}{name === "campaigns" && <small> ({ad.noSpend})</small>}</span></li>)}
+                  {p.items.map((item, k) => (k < 2 || all) && <li><span>{k < 2 && <><b>{pack[k]}</b> </>}{item}{ranged && <small class="pper"> {p.perAccount}</small>}{k < 2 && <em class="padd" dir="ltr" data-for={k ? "reels" : "posts"} hidden></em>}{k === 1 && <small class="pnote">({p.footage})</small>}</span></li>)}
+                  {detailValues(pack).map((value, k) => <li><span>{p.details[k]}: <b>{value}</b>{ranged && <small class="pper"> {p.perAccount}</small>}</span></li>)}
+                  {all && <li><span>{p.contentPlan}</span></li>}
+                  {all && toggles.map(([name]) => <li><span>{name === "website" ? <>{p.site}{" "}<small>({p.siteKinds})</small></> : ad[name]}{name === "campaigns" && <small> ({ad.noSpend})</small>}</span></li>)}
                 </ul>
               : <div class="pcalc" data-lenis-prevent>
-                  <label><span>{f.accounts}<small>{plan.accountsNote(price, price * 0.8, p.currency)}</small></span><input type="number" name="accounts" min="0" max="10" value="1" data-price={price} /></label>
+                  <p class="pincl">✓ {p.items[2]}</p>
+                  <label><span>{f.accounts}<small>{plan.accountsNote(price, price * 0.8, p.currency)}</small><small class="perr" id="pcalc-need" hidden>{plan.need}</small></span><input type="number" name="accounts" min="0" max="10" value="0" data-price={price} aria-describedby="pcalc-need" /></label>
                   {rates.map(([field, cost, max]) => <label><span>{f[field]}<small>{cost} {p.currency} {plan.per[field]}</small></span><input type="number" name={field} min="0" max={max} value="0" data-price={cost} /></label>)}
-                  <label><span>{f.footage}<small>{plan.shootNote(shooting, p.currency)}</small></span><select name="footage">{p.footage.map((label, k) => <option value={k * shooting}>{label}</option>)}</select></label>
                   {extras.map(([label, cost, bill, note]) => <label class="pcheck"><input type="checkbox" data-price={cost} data-bill={bill} /><span>{label}<small>{cost} {p.currency} {bill === "year" ? ad.yearly : bill ? ad.oneTime : p.monthly}{note && ` · ${note}`}</small></span></label>)}
                 </div>}
             <div class="pfoot">

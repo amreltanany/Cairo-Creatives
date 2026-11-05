@@ -7,17 +7,17 @@ const tags = [
   [["landing-tag.webp", "left center", "https://amreltanany.github.io/apex-nine-racing/"], ["business-tag.webp", "center top", "https://qaro2a.com/"], ["store-tag.webp", "center 66%;background-size:190%", "https://amreltanany.github.io/sneakers/"], ["responsive-tag.webp", "center 30%", "https://amreltanany.github.io/MeridianBuild/"], ["speed-tag.webp", "center top", "https://samconstructions-eg.com/"], ["maintenance-tag.webp", "center 20%", "https://amreltanany.github.io/ronin/"]],
   [["logo-folio.png", "center 30%"], ["tag-social.webp", "center"], ["tag-ads.webp", "center top"], ["tag-brand.webp", "center"], ["tag-packaging.webp", "center"], ["tag-photo.webp", "center"]],
 ];
-// work samples per card as { src, href? } (href opens the live site in a new tab), { embed } (Behance player) { reels: [{ src }] } (vertical images in one row) or { posters: [{ src }] } (whole uncropped images, two per row, a lone last one full width); a card shows at least two frames, missing ones keep the placeholder. Alt texts come from i18n in reading order.
+// work samples per card as { src, href? } (href opens the live site in a new tab), { reels: [{ src }] } (vertical images in one row) or { posters: [{ src }] } (whole uncropped images, two per row, a lone last one full width); a card shows at least two frames, missing ones keep the placeholder. Alt texts come from i18n in reading order.
+// every service links to the studio's Behance profile
+const behance = "https://www.behance.net/CairoCreatives";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const a = t.cards.map((c) => c.alts);
 const photos = [
   [
-    { embed: "https://www.behance.net/embed/project/243523649?ilo0=1", alt: a[0][0] },
-    { embed: "https://www.behance.net/embed/project/251299651?ilo0=1", alt: a[0][1] },
     { reels: [
-      { src: `${base}/images/work/reel-1.webp`, alt: a[0][2] },
-      { src: `${base}/images/work/reel-2.webp`, alt: a[0][3] },
-      { src: `${base}/images/work/reel-3.webp`, alt: a[0][4] },
+      { src: `${base}/images/work/reel-1.webp`, alt: a[0][0] },
+      { src: `${base}/images/work/reel-2.webp`, alt: a[0][1] },
+      { src: `${base}/images/work/reel-3.webp`, alt: a[0][2] },
     ] },
   ],
   [
@@ -27,9 +27,10 @@ const photos = [
   ],
   [
     { posters: [
-      { src: `${base}/images/work/design-italy.webp`, alt: a[2][0] },
-      { src: `${base}/images/work/design-delivery.webp`, alt: a[2][1] },
-      { src: `${base}/images/work/design-clock.webp`, alt: a[2][2] },
+      { src: `${base}/images/work/design-wahab.jpg`, alt: a[2][0] },
+      { src: `${base}/images/work/design-talha.jpg`, alt: a[2][1] },
+      { src: `${base}/images/work/design-deutschelite.jpg`, alt: a[2][2] },
+      { src: `${base}/images/work/design-carrier.jpg`, alt: a[2][3] },
     ] },
   ],
 ];
@@ -41,17 +42,15 @@ const photos = [
       {t.cards.map(({ title, text, tags: labels }, i) => (
         <div class="svc">
           <div class="txt rv">
-            <div><h3>{title}</h3><p>{text}</p></div>
+            <div><h3>{title}</h3><p>{text}</p><a class="behance" href={behance} target="_blank" rel="noopener">{t.behance}</a></div>
             <ul>{tags[i].map(([bg, pos, href], j) => <li class="pill has-bg" style={`background-image:url(${base}/images/work/${bg})${pos ? `;background-position:${pos}` : ""}`}>{href ? <a href={href} target="_blank" rel="noopener">{labels[j]}</a> : <b>{labels[j]}</b>}</li>)}</ul>
           </div>
           <div class="imgs">
-            {[...Array(photos[i][0]?.posters ? 1 : Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
+            {[...Array(photos[i][0]?.posters || photos[i][0]?.reels ? 1 : Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
               ? (photos[i][k].posters
                 ? <div class="reels posters">{photos[i][k].posters.map((r) => <div class="ph reveal photo poster"><img src={r.src} alt={r.alt} loading="lazy" /></div>)}</div>
                 : photos[i][k].reels
                 ? <div class="reels">{photos[i][k].reels.map((r) => <div class="ph reveal photo reel"><img src={r.src} alt={r.alt} loading="lazy" /></div>)}</div>
-                : photos[i][k].embed
-                ? <div class="ph reveal embed"><iframe src={photos[i][k].embed} title={photos[i][k].alt} loading="lazy" scrolling="no" allowfullscreen allow="clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
                 : photos[i][k].href
                 ? <a class="ph reveal photo" href={photos[i][k].href} target="_blank" rel="noopener"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /><span class="visit">{t.visit}</span></a>
                 : <div class="ph reveal photo"><img src={photos[i][k].src} alt={photos[i][k].alt} loading="lazy" /></div>)
