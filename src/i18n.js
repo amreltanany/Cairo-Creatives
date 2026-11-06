@@ -54,7 +54,7 @@ const en = {
         fields: { accounts: "Accounts", designs: "Post designs", reels: "Reels", videos: "Long video, minutes", platforms: "Platforms" },
         // unit price notes under each calculator option
         per: { designs: "/ post", reels: "/ reel", videos: "/ minute", platforms: "/ platform" },
-        accountsNote: (first, extra, cur) => `${first} ${cur} first, ${extra} ${cur} each extra`, need: "Choose at least 1 account" },
+        accountsNote: "+80% on monthly services for each extra account", need: "Choose at least 1 account" },
       web: { name: "Stability Zone", line: "Steady content, every month" },
       design: { name: "Ready to Grow", line: "For brands ready to scale" },
     },
@@ -123,7 +123,7 @@ const ar = {
       custom: { name: "مخصص", line: "ابنِ خطتك بنفسك",
         fields: { accounts: "الحسابات", designs: "تصميم بوست", reels: "ريلز", videos: "فيديو طويل بالدقيقة", platforms: "عدد المنصات" },
         per: { designs: "/ للبوست", reels: "/ للريل", videos: "/ للدقيقة", platforms: "/ للمنصة" },
-        accountsNote: (first, extra, cur) => `${first} ${cur} لأول حساب، و${extra} ${cur} لكل حساب زيادة`, need: "اختر حسابًا واحدًا على الأقل" },
+        accountsNote: "+80% على الخدمات الشهرية لكل حساب زيادة", need: "اختر حسابًا واحدًا على الأقل" },
       web: { name: "منطقة الاستقرار", line: "محتوى ثابت كل شهر" },
       design: { name: "جاهز للنمو", line: "للبراندات الجاهزة للتوسع" },
     },

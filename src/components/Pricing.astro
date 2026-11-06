@@ -2,8 +2,6 @@
 import { getT } from "../i18n.js";
 const t = getT(Astro);
 const p = t.pricing;
-// ponytail: price of one account in the Custom calculator, a placeholder until the client prices it
-const price = 1000;
 // one price list for every card. From the client's list: post, reel, campaigns, website (yearly), identity. ponytail: the rest are placeholders until the client prices them.
 const rate = { post: 150, reel: 600, campaigns: 3000, website: 5000, identity: 3000,
   platform: 200, video: 150, moderation: 2500 };
@@ -25,7 +23,7 @@ const packPrice = ([posts, reels, platforms]) =>
   posts * rate.post + reels * rate.reel + (platforms === "all" ? 0 : platforms * rate.platform);
 // add-ons on every plan card: [name, unit price, per-unit label?, bill?] where bill is "year" or "once" (else monthly); counts go next to the matching list line in green
 const ad = p.addons;
-// Custom calculator unit prices (the accounts row uses `price` with the same per-account rule as the Accounts plan):
+// Custom calculator unit prices (accounts are free; each extra one adds 80% of the monthly services, as on Accounts):
 // [field, unit price, max] per count (posts and reels at the extra-post and extra-reel prices), and the add-ons as yes/no boxes [label, price, bill?, note?] (bill: "year" or "once", else monthly)
 const rates = [["designs", rate.post, 99], ["reels", rate.reel, 99], ["videos", rate.video, 99], ["platforms", rate.platform, 10]];
 const extras = [[ad.moderation, rate.moderation], [ad.campaigns, rate.campaigns, undefined, ad.noSpend], [ad.website, rate.website, "year"], [ad.identity, rate.identity, "once"]];
@@ -44,7 +42,7 @@ const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.
           <article class:list={["pcard", { custom: !pack, dense: pack }]} data-p={i - 2} dir={t.dir}>
             <span class="picon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={icon} /></svg></span>
             <h3>{plan.name}</h3>
-            <p class="pprice"><strong data-base={pack ? planPrice : undefined}>{pack ? planPrice : price}</strong> {p.currency} <small>{p.monthly}</small></p>
+            <p class="pprice"><strong data-base={pack ? planPrice : undefined}>{pack ? planPrice : 0}</strong> {p.currency} <small>{p.monthly}</small></p>
             <p class="pline">{plan.line}</p>
             <p class="pextra">{pack && !all && toggles.map(([name]) => <span data-for={name} hidden>+ {ad.chips[name]}</span>)}<span class="pyear" hidden>+ <b>0</b> {p.currency} {ad.yearly}</span><span class="ponce" hidden>+ <b>0</b> {p.currency} {ad.oneTime}</span></p>
             {ranged && <label class="prange"><span>{p.accounts} <output>1</output></span><input type="range" min="1" max="10" value="1" /></label>}
@@ -57,7 +55,7 @@ const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.
                 </ul>
               : <div class="pcalc" data-lenis-prevent>
                   <p class="pincl">✓ {p.items[2]}</p>
-                  <label><span>{f.accounts}<small>{plan.accountsNote(price, price * 0.8, p.currency)}</small><small class="perr" id="pcalc-need" hidden>{plan.need}</small></span><input type="number" name="accounts" min="0" max="10" value="0" data-price={price} aria-describedby="pcalc-need" /></label>
+                  <label><span>{f.accounts}<small>{plan.accountsNote}</small><small class="perr" id="pcalc-need" hidden>{plan.need}</small></span><input type="number" name="accounts" min="0" max="10" value="0" aria-describedby="pcalc-need" /></label>
                   {rates.map(([field, cost, max]) => <label><span>{f[field]}<small>{cost} {p.currency} {plan.per[field]}</small></span><input type="number" name={field} min="0" max={max} value="0" data-price={cost} /></label>)}
                   {extras.map(([label, cost, bill, note]) => <label class="pcheck"><input type="checkbox" data-price={cost} data-bill={bill} /><span>{label}<small>{cost} {p.currency} {bill === "year" ? ad.yearly : bill ? ad.oneTime : p.monthly}{note && ` · ${note}`}</small></span></label>)}
                 </div>}

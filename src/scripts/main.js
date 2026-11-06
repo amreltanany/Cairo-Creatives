@@ -26,7 +26,14 @@ document.addEventListener('click', (e) => {
   if (!a) return;
   e.preventDefault();
   const h = a.getAttribute('href');
-  lenis.scrollTo(h === '#' ? 0 : h, { offset: -70 });
+  if (h === '#') return lenis.scrollTo(0);
+  // the page grows while gliding (lazy images, reveals), so the first target can land short:
+  // once the glide ends, settle on where the section is now
+  const go = (left) => lenis.scrollTo(h, { offset: -70, onComplete: () => {
+    const off = $(h.slice(1)).getBoundingClientRect().top - 70;
+    if (left && Math.abs(off) > 2) go(left - 1);
+  } });
+  go(3);
 });
 
 // rolling text: one span per letter, delay index drives the piano stagger
@@ -273,20 +280,21 @@ pslider.querySelectorAll('.pcard.dense').forEach((card) => {
 const pcalc = pslider.querySelector('.pcalc'), pcalcInputs = [...pcalc.querySelectorAll('input[type=number]')];
 const pcalcSelects = [...pcalc.querySelectorAll('select')], pcalcChecks = [...pcalc.querySelectorAll('input[type=checkbox]')];
 const pcalcCard = pcalc.closest('.pcard'), pcalcTotal = pcalcCard.querySelector('.pprice strong');
+const pcalcAccounts = pcalc.querySelector('[name=accounts]');
 const pcalcRun = () => {
-  // Custom has no separate add-ons: every ticked service, yearly and one-time ones included, counts in the one total
-  let total = 0;
-  pcalcSelects.forEach((n) => { total += +n.value; });
-  pcalcChecks.forEach((n) => { if (n.checked) total += +n.dataset.price; });
-  pcalcInputs.forEach((i) => {
-    const n = pcalcCount(i), cost = +i.dataset.price;
-    total += i.name === 'accounts' ? accountsPrice(cost, n) : n * cost;
-  });
-  pcalcTotal.textContent = Math.round(total);
+  // an account costs nothing itself: every account after the first adds 80% of the monthly services.
+  // Yearly and one-time services (website, visual identity) are paid once, whatever the account count.
+  let monthly = 0, fixed = 0;
+  const add = (n, cost) => { if (n.dataset.bill) fixed += cost; else monthly += cost; };
+  pcalcSelects.forEach((n) => add(n, +n.value));
+  pcalcChecks.forEach((n) => add(n, n.checked ? +n.dataset.price : 0));
+  pcalcInputs.forEach((i) => { if (i.name !== 'accounts') monthly += pcalcCount(i) * i.dataset.price; });
+  const accounts = Math.max(1, pcalcCount(pcalcAccounts));
+  pcalcTotal.textContent = Math.round(accountsPrice(monthly, accounts) + fixed);
 };
 pcalc.addEventListener('input', pcalcRun);
 // accounts starts at 0 but a Custom plan needs at least one: Get started stays put and flags the field until it has one
-const pcalcAccounts = pcalc.querySelector('[name=accounts]'), pcalcNeed = pcalc.querySelector('.perr');
+const pcalcNeed = pcalc.querySelector('.perr');
 const pcalcFlag = (on) => { pcalcNeed.hidden = !on; pcalcAccounts.toggleAttribute('aria-invalid', on); };
 pcalcCard.querySelector('.pfoot a').addEventListener('click', (e) => {
   if (pcalcCount(pcalcAccounts) >= 1) return;
