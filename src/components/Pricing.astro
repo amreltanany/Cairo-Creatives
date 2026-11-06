@@ -3,18 +3,18 @@ import { getT } from "../i18n.js";
 const t = getT(Astro);
 const p = t.pricing;
 // one price list for every card. From the client's list: post, reel, campaigns, website (yearly), identity. ponytail: the rest are placeholders until the client prices them.
-const rate = { post: 150, reel: 600, campaigns: 3000, website: 5000, identity: 3000,
+const rate = { post: 150, reel: 600, campaigns: 3000, website: 5000, webcare: 1500, identity: 3000,
   platform: 200, video: 150, moderation: 2500 };
 // [id, icon path, package?, fixed price?, everything?]; names and lines come from i18n by id. A fixed price is the client's package
 // price (START 3000, GROW 5000, SCALE 10000); without one the plan costs the sum of what it contains. A package is
 // [post designs, reels, platforms] and fills the shared content list. Reels are always edited from client footage.
-// Partners has everything: SCALE on all platforms, a monthly content plan and every add-on listed as included, at the client's 20000 price. Only Accounts has the accounts range; the middle plan starts in front
+// Partners has everything: SCALE on all platforms, a monthly content plan and every add-on listed as included, at the client's 25000 price. Only Accounts has the accounts range; the middle plan starts in front
 const plans = [
-  ["partners", "M12 3l2.700 5.800 6.300.800-4.600 4.300 1.200 6.200L12 17l-5.600 3.100 1.200-6.200L3 9.600l6.300-.800L12 3Z", [20, 6, "all"], 20000, true],
-  ["accounts", "M3 17l6-6 4 4 8-8M15 7h6v6", [8, 2, 2], 3000],
+  ["partners", "M12 3l2.700 5.800 6.300.800-4.600 4.300 1.200 6.200L12 17l-5.600 3.100 1.200-6.200L3 9.600l6.300-.800L12 3Z", [20, 10, "all"], 25000, true],
+  ["accounts", "M3 17l6-6 4 4 8-8M15 7h6v6", [6, 3, 2], 3000],
   ["custom", "M4 6h10M18 6h2M4 12h2M10 12h10M4 18h8M16 18h4M16 4v4M8 10v4M14 16v4"],
   ["web", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3ZM8.5 12l2.5 2.5 4.5-5", [12, 4, 3], 5000],
-  ["design", "M12 21v-9M12 12c0-4 3-7 8-7 0 5-3 7-8 7ZM12 15c0-3-2.500-5-7-5 0 4 2.500 5 7 5M8 21h8", [20, 6, "all"], 10000],
+  ["design", "M12 21v-9M12 12c0-4 3-7 8-7 0 5-3 7-8 7ZM12 15c0-3-2.500-5-7-5 0 4 2.500 5 7 5M8 21h8", [20, 10, "all"], 10000],
 ];
 // the reels source sits in brackets under the reels line; platforms is its own line
 const detailValues = ([, , platforms]) => [platforms === "all" ? p.allPlatforms : platforms];
@@ -26,10 +26,14 @@ const ad = p.addons;
 // Custom calculator unit prices (accounts are free; each extra one adds 80% of the monthly services, as on Accounts):
 // [field, unit price, max] per count (posts and reels at the extra-post and extra-reel prices), and the add-ons as yes/no boxes [label, price, bill?, note?] (bill: "year" or "once", else monthly)
 const rates = [["designs", rate.post, 99], ["reels", rate.reel, 99], ["videos", rate.video, 99], ["platforms", rate.platform, 10]];
-const extras = [[ad.moderation, rate.moderation], [ad.campaigns, rate.campaigns, undefined, ad.noSpend], [ad.website, rate.website, "year"], [ad.identity, rate.identity, "once"]];
+// the bracketed part of a label, set smaller
+const kinds = { webcare: ad.webcareKinds };
+const extras = [[ad.moderation, rate.moderation], [ad.campaigns, rate.campaigns, undefined, ad.noSpend], [ad.website, rate.website, "year"], [ad.webcare, rate.webcare, undefined, undefined, ad.webcareKinds], [ad.identity, rate.identity, "once"]];
 const f = p.plans.custom.fields;
 const counted = [["reels", rate.reel, ad.perReel], ["posts", rate.post, ad.perPost]];
-const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.campaigns, p.monthly], ["website", rate.website, ad.yearly, "year"], ["identity", rate.identity, ad.oneTime, "once"]];
+// Accounts also sells extra platforms, shown as +n on its Platforms line
+const platformAdd = ["platforms", rate.platform, ad.perPlatform];
+const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.campaigns, p.monthly], ["website", rate.website, ad.yearly, "year"], ["webcare", rate.webcare, p.monthly], ["identity", rate.identity, ad.oneTime, "once"]];
 ---
 <section class="pricing" id="pricing">
   <div class="wrap">
@@ -49,23 +53,23 @@ const toggles = [["moderation", rate.moderation, p.monthly], ["campaigns", rate.
             {pack
               ? <ul>
                   {p.items.map((item, k) => (k < 2 || all) && <li><span>{k < 2 && <><b>{pack[k]}</b> </>}{item}{ranged && <small class="pper"> {p.perAccount}</small>}{k < 2 && <em class="padd" dir="ltr" data-for={k ? "reels" : "posts"} hidden></em>}{k === 1 && <small class="pnote">({p.footage})</small>}</span></li>)}
-                  {detailValues(pack).map((value, k) => <li><span>{p.details[k]}: <b>{value}</b>{ranged && <small class="pper"> {p.perAccount}</small>}</span></li>)}
+                  {detailValues(pack).map((value, k) => <li><span>{p.details[k]}: <b>{value}</b>{ranged && <><small class="pper"> {p.perAccount}</small><em class="padd" dir="ltr" data-for="platforms" hidden></em></>}</span></li>)}
                   {all && <li><span>{p.contentPlan}</span></li>}
-                  {all && toggles.map(([name]) => <li><span>{name === "website" ? <>{p.site}{" "}<small>({p.siteKinds})</small></> : ad[name]}{name === "campaigns" && <small> ({ad.noSpend})</small>}</span></li>)}
+                  {all && toggles.map(([name]) => <li><span>{name === "website" ? <>{p.site}{" "}<small class="pkinds">({p.siteKinds})</small></> : <>{ad[name]}{kinds[name] && <small class="pkinds"> ({kinds[name]})</small>}</>}{name === "campaigns" && <small> ({ad.noSpend})</small>}</span></li>)}
                 </ul>
               : <div class="pcalc" data-lenis-prevent>
                   <p class="pincl">✓ {p.items[2]}</p>
                   <label><span>{f.accounts}<small>{plan.accountsNote}</small><small class="perr" id="pcalc-need" hidden>{plan.need}</small></span><input type="number" name="accounts" min="0" max="10" value="0" aria-describedby="pcalc-need" /></label>
                   {rates.map(([field, cost, max]) => <label><span>{f[field]}<small>{cost} {p.currency} {plan.per[field]}</small></span><input type="number" name={field} min="0" max={max} value="0" data-price={cost} /></label>)}
-                  {extras.map(([label, cost, bill, note]) => <label class="pcheck"><input type="checkbox" data-price={cost} data-bill={bill} /><span>{label}<small>{cost} {p.currency} {bill === "year" ? ad.yearly : bill ? ad.oneTime : p.monthly}{note && ` · ${note}`}</small></span></label>)}
+                  {extras.map(([label, cost, bill, note, kind]) => <label class="pcheck"><input type="checkbox" data-price={cost} data-bill={bill} /><span>{label}{kind && <small class="pkinds"> ({kind})</small>}<small>{cost} {p.currency} {bill === "year" ? ad.yearly : bill ? ad.oneTime : p.monthly}{note && ` · ${note}`}</small></span></label>)}
                 </div>}
             <div class="pfoot">
               {pack && <details class="padds">
                 <summary>{ad.open}</summary>
                 <div class="ppanel">
                   <strong>{ad.title}</strong>
-                  {counted.map(([name, cost, per]) => <label><span>{ad[name]}<small>{cost} {p.currency} {per}</small></span><input type="number" name={name} min="0" max="20" value="0" data-price={cost} /></label>)}
-                  {!all && toggles.map(([name, cost, per, bill]) => <label class="pcheck"><input type="checkbox" name={name} data-price={cost} data-bill={bill} /><span>{ad[name]}<small>{cost} {p.currency} {per}{name === "campaigns" && ` · ${ad.noSpend}`}</small></span></label>)}
+                  {(ranged ? [...counted, platformAdd] : counted).map(([name, cost, per]) => <label><span>{ad[name]}<small>{cost} {p.currency} {per}</small></span><input type="number" name={name} min="0" max="20" value="0" data-price={cost} /></label>)}
+                  {!all && toggles.filter(([name]) => !(ranged && name === "webcare")).map(([name, cost, per, bill]) => <label class="pcheck"><input type="checkbox" name={name} data-price={cost} data-bill={bill} /><span>{ad[name]}{kinds[name] && <small class="pkinds"> ({kinds[name]})</small>}<small>{cost} {p.currency} {per}{name === "campaigns" && ` · ${ad.noSpend}`}</small></span></label>)}
                   <button type="button" class="pdone">{ad.done}</button>
                 </div>
               </details>}

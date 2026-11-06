@@ -42,10 +42,10 @@ const en = {
     details: ["Platforms"], perAccount: "/ account", allPlatforms: "All", contentPlan: "Monthly content plan & scheduling", site: "Website", siteKinds: "portfolio, landing page",
     footage: "client footage",
     addons: {
-      open: "+ Add-ons", title: "Add-ons", done: "Done", oneTime: "one-time", yearly: "/ year", perReel: "/ reel", perPost: "/ post",
-      reels: "Extra reels", posts: "Extra posts", campaigns: "Ad campaign management", website: "Website (portfolio, landing page)", identity: "Visual identity",
-      moderation: "Moderation, 6 hours a day", noSpend: "ad spend not included",
-      chips: { moderation: "Moderation 6h/day", campaigns: "Ad campaigns", website: "Website (portfolio, landing page)", identity: "Visual identity" },
+      open: "+ Add-ons", title: "Add-ons", done: "Done", oneTime: "one-time", yearly: "/ year", perReel: "/ reel", perPost: "/ post", perPlatform: "/ platform",
+      reels: "Extra reels", posts: "Extra posts", platforms: "Extra platforms", campaigns: "Ad campaign management", website: "Website (portfolio, landing page)", identity: "Visual identity",
+      moderation: "Moderation, 6 hours a day", webcare: "Website management", webcareKinds: "hosting, design, security", noSpend: "ad spend not included",
+      chips: { moderation: "Moderation 6h/day", campaigns: "Ad campaigns", website: "Website (portfolio, landing page)", webcare: "Website management", identity: "Visual identity" },
     },
     plans: {
       partners: { name: "Partners", line: "Your full creative team" },
@@ -64,8 +64,8 @@ const en = {
     button: "Chat on WhatsApp", message: "Hi Cairo Creatives, I'd like to talk about a project.",
   },
   faq: {
-    tag: "FAQ", title: ["Common", "questions"], answer: "Placeholder answer. Replace with your own.",
-    questions: ["How long does a project take?", "Do you work with early-stage teams?", "What do you need from us to start?", "Can we request changes after delivery?", "Do you build sites or only design them?", "Can you build on our existing brand?", "How does the monthly plan work?", "How do we know we're a good fit?"],
+    tag: "FAQ", title: ["Common", "questions"],
+    questions: [["What services does your agency provide?","We offer a wide range of digital services, including social media design, branding, logo design, paid advertising, video editing, photography, website development, and more."],["Why should I choose your agency?","We combine creativity, strategy, and professional execution to help businesses build a strong brand presence and achieve their marketing goals."],["Do you work with startups and small businesses?","Yes! We work with startups, small businesses, and established brands across different industries."],["Can I request a custom package?","Absolutely! We can create customized packages based on your business needs, goals, and budget."],["Can you help me choose the right service for my business?","Yes! Our team can understand your business needs and recommend the most suitable solutions."],["Do you work with international clients?","Yes, we work with clients from different countries and markets."],["Can I see your previous work?","Of course! You can explore our portfolio to discover some of our previous projects."],["How much do your services cost?","Our pricing depends on the type of service, project requirements, and scope of work. Contact us to receive a customized quotation."],["Do you offer monthly packages?","Yes, we offer flexible monthly packages for businesses looking for ongoing design, marketing, and social media services."],["What payment methods do you accept?","We offer convenient payment options. Contact our team to learn about the available payment methods."],["How do I get started with your agency?","Simply contact us, tell us about your project, and our team will guide you through the next steps."],["How long does it take to complete a project?","Delivery time depends on the type and complexity of the project. We always agree on a timeline before starting."],["Can I request revisions to my designs?","Yes, revisions are available according to the agreed project scope and package."]],
   },
   footer: { line: ["Big ideas start with a small step.", "Let's make yours unforgettable."], nav: "NAVIGATION", links: ["Home", "About", "Services", "Pricing", "FAQ", "Contact us"], connect: "CONNECT" },
 };
@@ -112,10 +112,10 @@ const ar = {
     details: ["عدد المنصات"], perAccount: "/ لكل حساب", allPlatforms: "كل المنصات", contentPlan: "خطة محتوى شهرية وجدولة النشر", site: "موقع إلكتروني", siteKinds: "بورتفوليو، صفحة هبوط",
     footage: "خامات العميل",
     addons: {
-      open: "+ إضافات", title: "إضافات", done: "تم", oneTime: "مرة واحدة", yearly: "/ سنويًا", perReel: "/ للريل", perPost: "/ للبوست",
-      reels: "ريل إضافي", posts: "بوست إضافي", campaigns: "إدارة الحملات الإعلانية", website: "موقع إلكتروني (بورتفوليو، صفحة هبوط)", identity: "تصميم هوية بصرية",
-      moderation: "موديريشن 6 ساعات يوميًا", noSpend: "لا يشمل تكلفة الإعلان",
-      chips: { moderation: "موديريشن 6 ساعات", campaigns: "الحملات الإعلانية", website: "موقع إلكتروني (بورتفوليو، صفحة هبوط)", identity: "هوية بصرية" },
+      open: "+ إضافات", title: "إضافات", done: "تم", oneTime: "مرة واحدة", yearly: "/ سنويًا", perReel: "/ للريل", perPost: "/ للبوست", perPlatform: "/ للمنصة",
+      reels: "ريل إضافي", posts: "بوست إضافي", platforms: "منصة إضافية", campaigns: "إدارة الحملات الإعلانية", website: "موقع إلكتروني (بورتفوليو، صفحة هبوط)", identity: "تصميم هوية بصرية",
+      moderation: "موديريشن 6 ساعات يوميًا", webcare: "إدارة الموقع", webcareKinds: "استضافة، تصميم، حماية", noSpend: "لا يشمل تكلفة الإعلان",
+      chips: { moderation: "موديريشن 6 ساعات", campaigns: "الحملات الإعلانية", website: "موقع إلكتروني (بورتفوليو، صفحة هبوط)", webcare: "إدارة الموقع", identity: "هوية بصرية" },
     },
     plans: {
       partners: { name: "الشركاء", line: "فريقك الإبداعي الكامل" },
@@ -133,8 +133,8 @@ const ar = {
     button: "تواصل على واتساب", message: "أهلًا Cairo Creatives، عايز أتكلم معاكم عن مشروع.",
   },
   faq: {
-    tag: "الأسئلة الشائعة", title: ["أسئلة", "شائعة"], answer: "إجابة مؤقتة. استبدلها بإجابتك.",
-    questions: ["كم يستغرق المشروع؟", "هل تعملون مع الشركات الناشئة؟", "ماذا تحتاجون منا للبدء؟", "هل يمكننا طلب تعديلات بعد التسليم؟", "هل تبنون المواقع أم تصممونها فقط؟", "هل يمكنكم البناء على هويتنا الحالية؟", "كيف تعمل الخطة الشهرية؟", "كيف نعرف أننا مناسبون لبعض؟"],
+    tag: "الأسئلة الشائعة", title: ["أسئلة", "شائعة"],
+    questions: [["ما الخدمات التي تقدمها وكالتكم؟","نقدم مجموعة واسعة من الخدمات الرقمية، منها تصميم السوشيال ميديا، والهوية البصرية، وتصميم اللوجو، والإعلانات الممولة، ومونتاج الفيديو، والتصوير، وتطوير المواقع، وغيرها."],["لماذا تختار وكالتنا؟","نجمع بين الإبداع والاستراتيجية والتنفيذ الاحترافي لنساعد الشركات على بناء حضور قوي لعلامتها وتحقيق أهدافها التسويقية."],["هل تعملون مع الشركات الناشئة والصغيرة؟","نعم! نعمل مع الشركات الناشئة والصغيرة والعلامات الكبيرة في مجالات مختلفة."],["هل يمكنني طلب باقة مخصصة؟","بالتأكيد! نصمم باقات مخصصة حسب احتياجات عملك وأهدافك وميزانيتك."],["هل يمكنكم مساعدتي في اختيار الخدمة المناسبة لعملي؟","نعم! فريقنا يفهم احتياجات عملك ويرشح لك أنسب الحلول."],["هل تعملون مع عملاء من خارج مصر؟","نعم، نعمل مع عملاء من دول وأسواق مختلفة."],["هل يمكنني رؤية أعمالكم السابقة؟","طبعًا! تقدر تتصفح معرض أعمالنا وتشوف بعض مشاريعنا السابقة."],["كم تكلفة خدماتكم؟","تعتمد الأسعار على نوع الخدمة ومتطلبات المشروع وحجم العمل. تواصل معنا لتحصل على عرض سعر مخصص."],["هل تقدمون باقات شهرية؟","نعم، نقدم باقات شهرية مرنة للشركات التي تحتاج خدمات تصميم وتسويق وسوشيال ميديا بشكل مستمر."],["ما طرق الدفع المتاحة؟","نوفر طرق دفع سهلة. تواصل مع فريقنا لمعرفة طرق الدفع المتاحة."],["كيف أبدأ العمل مع وكالتكم؟","تواصل معنا وأخبرنا عن مشروعك، وفريقنا سيرشدك للخطوات التالية."],["كم يستغرق تنفيذ المشروع؟","مدة التسليم تعتمد على نوع المشروع ودرجة تعقيده، ونتفق دائمًا على جدول زمني قبل البدء."],["هل يمكنني طلب تعديلات على التصميمات؟","نعم، التعديلات متاحة حسب نطاق المشروع والباقة المتفق عليها."]],
   },
   footer: { line: ["الأفكار الكبيرة تبدأ بخطوة صغيرة.", "لنجعل خطوتك لا تُنسى."], nav: "التنقل", links: ["الرئيسية", "من نحن", "خدماتنا", "الأسعار", "الأسئلة", "تواصل معنا"], connect: "تابعنا" },
 };

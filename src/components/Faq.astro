@@ -5,6 +5,6 @@ const t = getT(Astro).faq;
 <section class="faq wrap" id="faq">
   <div><div class="tag">{t.tag}</div><h2 class="h2">{t.title[0]}<br><span class="dim">{t.title[1]}</span></h2></div>
   <div>
-    {t.questions.map((q) => <details><summary>{q}</summary><p>{t.answer}</p></details>)}
+    {t.questions.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
   </div>
 </section>

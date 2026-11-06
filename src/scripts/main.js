@@ -29,8 +29,11 @@ document.addEventListener('click', (e) => {
   if (h === '#') return lenis.scrollTo(0);
   // the page grows while gliding (lazy images, reveals), so the first target can land short:
   // once the glide ends, settle on where the section is now
-  const go = (left) => lenis.scrollTo(h, { offset: -70, onComplete: () => {
-    const off = $(h.slice(1)).getBoundingClientRect().top - 70;
+  // Pricing lands on the cards, centred in the window (the nav hides on the way down), not the heading above them
+  const el = h === '#pricing' ? pslider : $(h.slice(1));
+  const gap = h === '#pricing' ? Math.max(8, (innerHeight - el.offsetHeight) / 2) : 70;
+  const go = (left) => lenis.scrollTo(el, { offset: -gap, onComplete: () => {
+    const off = el.getBoundingClientRect().top - gap;
     if (left && Math.abs(off) > 2) go(left - 1);
   } });
   go(3);
