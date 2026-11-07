@@ -1,5 +1,6 @@
 ---
 import { getT } from "../i18n.js";
+import Clients from "./Clients.astro";
 const t = getT(Astro).services;
 // tag backgrounds per card as [bg image, background-position?, live site?]; titles, texts and labels come from i18n in the same order
 const tags = [
@@ -7,7 +8,7 @@ const tags = [
   [["landing-tag.webp", "left center", "https://amreltanany.github.io/apex-nine-racing/"], ["business-tag.webp", "center top", "https://qaro2a.com/"], ["store-tag.webp", "center 66%;background-size:190%", "https://amreltanany.github.io/sneakers/"], ["responsive-tag.webp", "center 30%", "https://amreltanany.github.io/MeridianBuild/"], ["speed-tag.webp", "center top", "https://samconstructions-eg.com/"], ["maintenance-tag.webp", "center 20%", "https://amreltanany.github.io/ronin/"]],
   [["logo-folio.png", "center 30%"], ["tag-social.webp", "center"], ["tag-ads.webp", "center top"], ["tag-brand.webp", "center"], ["tag-packaging.webp", "center"], ["tag-photo.webp", "center"]],
 ];
-// work samples per card as { src, href? } (href opens the live site in a new tab), { reels: [{ src }] } (vertical images in one row) or { posters: [{ src }] } (whole uncropped images, two per row, a lone last one full width); a card shows at least two frames, missing ones keep the placeholder. Alt texts come from i18n in reading order.
+// work samples per card as { src, href? } (href opens the live site in a new tab), { reels: [{ src }] } (vertical images in one row, anything after it below) or { posters: [{ src }] } (whole uncropped images, two per row, a lone last one full width); a card shows at least two frames, missing ones keep the placeholder. Alt texts come from i18n in reading order.
 // every service links to the studio's Behance profile
 const behance = "https://www.behance.net/CairoCreatives";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -19,6 +20,7 @@ const photos = [
       { src: `${base}/images/work/reel-2.webp`, alt: a[0][1] },
       { src: `${base}/images/work/reel-3.webp`, alt: a[0][2] },
     ] },
+    { src: `${base}/images/work/editing-timeline.webp`, alt: a[0][3] },
   ],
   [
     { src: `${base}/images/work/display-egypt.webp`, alt: a[1][0], href: "https://displayegypt.com/" },
@@ -37,6 +39,7 @@ const photos = [
 ---
 <section class="services" id="services">
   <div class="wrap">
+    <Clients />
     <div class="head rv"><div class="tag">{t.tag}</div><h2 class="h2">{t.title}</h2></div>
     <div>
       {t.cards.map(({ title, text, tags: labels }, i) => (
@@ -46,7 +49,7 @@ const photos = [
             <ul>{tags[i].map(([bg, pos, href], j) => <li class="pill has-bg" style={`background-image:url(${base}/images/work/${bg})${pos ? `;background-position:${pos}` : ""}`}>{href ? <a href={href} target="_blank" rel="noopener">{labels[j]}</a> : <b>{labels[j]}</b>}</li>)}</ul>
           </div>
           <div class="imgs">
-            {[...Array(photos[i][0]?.posters || photos[i][0]?.reels ? 1 : Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
+            {[...Array(photos[i][0]?.posters ? 1 : photos[i][0]?.reels ? photos[i].length : Math.max(2, photos[i].length)).keys()].map((k) => photos[i][k]
               ? (photos[i][k].posters
                 ? <div class="reels posters">{photos[i][k].posters.map((r) => <div class="ph reveal photo poster"><img src={r.src} alt={r.alt} loading="lazy" /></div>)}</div>
                 : photos[i][k].reels

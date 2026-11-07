@@ -1,0 +1,20 @@
+---
+import { getT } from "../i18n.js";
+const t = getT(Astro).clients;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+// past clients' logos as [name, file in public/images/clients, site]
+const logos = [["Qaro2a", "qaro2a.png", "https://qaro2a.com"], ["Display Egypt Advertising", "display-egypt.png", "https://displayegypt.com"], ["Amr Eltanany", "a-mark.svg", "https://amreltanany.com"]];
+// each half of the loop repeats the logos so it is wider than any screen; the logos then sit close together without a gap at the seam
+const row = [0, 1, 2, 3].flatMap(() => logos);
+---
+<div class="clients">
+  <p class="tag">{t.title}</p>
+  <!-- the row is doubled so the loop is seamless; repeats are hidden from screen readers and skipped by Tab -->
+  <div class="marquee" dir="ltr">
+    {[0, 1].map((copy) => (
+      <ul aria-hidden={copy ? "true" : undefined}>
+        {row.map(([name, file, href], k) => <li aria-hidden={!copy && k >= logos.length ? "true" : undefined}><a href={href} target="_blank" rel="noopener" data-name={name} tabindex={copy || k >= logos.length ? -1 : undefined}><img src={`${base}/images/clients/${file}`} alt={copy || k >= logos.length ? "" : name} /></a></li>)}
+      </ul>
+    ))}
+  </div>
+</div>

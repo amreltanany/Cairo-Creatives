@@ -397,3 +397,25 @@ html[lang="ar"] .swap{height:1.3em}
 
 /* bracketed part of a label, e.g. (hosting, design, security) */
 .pcard .pkinds,.ppanel small.pkinds,.pcalc small.pkinds{display:inline;margin:0;font-size:.75em;font-weight:500;opacity:.7}
+
+/* CLIENTS: logo row that slides on its own and stops under the mouse */
+.clients{margin-bottom:100px}
+.clients .marquee{display:flex;overflow:hidden;padding:4px 0 36px;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.clients ul{display:flex;align-items:center;gap:72px;padding-right:72px;flex:none;animation:marquee 40s linear infinite}
+.clients .marquee:hover ul{animation-play-state:paused}
+.clients li{flex:none;list-style:none}
+.clients a{position:relative;display:block}
+/* client name under the logo on hover */
+.clients a::after{content:attr(data-name);position:absolute;left:50%;top:calc(100% + 10px);transform:translate(-50%,4px);font:600 13px/1 var(--body);color:#fff;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.clients a:hover::after,.clients a:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+.clients img{height:68px;width:auto;display:block;opacity:.75;transition:opacity .3s}
+.clients a:hover img,.clients a:focus-visible img{opacity:1}
+@keyframes marquee{to{transform:translateX(-100%)}}
+@media (max-width:760px){.clients{margin-bottom:64px}.clients ul{gap:44px;padding-right:44px}.clients img{height:48px}}
+/* phones: service titles shrink to fit the card (DEVELOPMENT overflowed) and the text block sits centred */
+@media (max-width:600px){
+  .svc .txt{padding:28px 20px}
+  .svc .txt>div{text-align:center}
+  .svc .txt h3{font-size:clamp(24px,8vw,40px)}
+  .svc .txt p{margin-inline:auto}
+}
