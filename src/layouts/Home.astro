@@ -1,18 +1,18 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import Hero from '../components/Hero.astro';
-import Intro from '../components/Intro.astro';
-import Services from '../components/Services.astro';
-import Pricing from '../components/Pricing.astro';
-import Contact from '../components/Contact.astro';
-import Faq from '../components/Faq.astro';
+import HomeSections from '../components/HomeSections.astro';
+import About from '../components/About.astro';
 import Footer from '../components/Footer.astro';
-import { getT, homeHref } from '../i18n.js';
+import { getT, homeHref, aboutHref, isAbout } from '../i18n.js';
 const t = getT(Astro);
+// the same shell serves the home page and the About page
+const about = isAbout(Astro);
+const href = about ? aboutHref : homeHref;
+const meta = about ? t.about.meta : t.meta;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const pageUrl = new URL(homeHref(t.lang), Astro.site).href;
-const otherUrl = new URL(homeHref(t.lang === 'ar' ? 'en' : 'ar'), Astro.site).href;
+const pageUrl = new URL(href(t.lang), Astro.site).href;
+const otherUrl = new URL(href(t.lang === 'ar' ? 'en' : 'ar'), Astro.site).href;
 // bump ?v= whenever og-image.jpg changes: WhatsApp/Facebook cache previews per image URL
 const ogImage = new URL(`${base}/og-image.jpg?v=2`, Astro.site).href;
 const homes = [`${base}/`, base, `${base}/index.html`, `${base}/ar/`, `${base}/ar`, `${base}/ar/index.html`];
@@ -23,25 +23,25 @@ const homes = [`${base}/`, base, `${base}/index.html`, `${base}/ar/`, `${base}/a
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{t.meta.title}</title>
+    <title>{meta.title}</title>
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <link rel="alternate" hreflang={t.lang} href={pageUrl} />
     <link rel="alternate" hreflang={t.lang === 'ar' ? 'en' : 'ar'} href={otherUrl} />
     <!-- link previews (WhatsApp, Facebook, LinkedIn, X): absolute URLs, 1200x630 JPG -->
-    <meta name="description" content={t.meta.description} />
+    <meta name="description" content={meta.description} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Cairo Creatives" />
     <meta property="og:locale" content={t.lang === 'ar' ? 'ar_EG' : 'en_US'} />
-    <meta property="og:title" content={t.meta.title} />
-    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
     <meta property="og:url" content={pageUrl} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={t.meta.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={t.meta.title} />
-    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
     <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Geist+Mono:wght@500;600&family=Inter:wght@400;500;600&family=Orbitron:wght@700&display=swap" rel="stylesheet" />
@@ -67,18 +67,10 @@ const homes = [`${base}/`, base, `${base}/index.html`, `${base}/ar/`, `${base}/a
       </div>
     </div>
     <Nav />
-    <Hero />
-    <Intro />
-    <Services />
-    <Pricing />
-    <Contact />
-    <Faq />
+    {about ? <About /> : <HomeSections />}
     <Footer />
     <button class="to-top" type="button" aria-label={t.toTop}>
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
     </button>
-    <script>
-      import '../scripts/main.js';
-    </script>
   </body>
 </html>

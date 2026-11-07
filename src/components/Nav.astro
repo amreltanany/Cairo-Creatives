@@ -1,12 +1,15 @@
 ---
-import { getT, homeHref } from "../i18n.js";
+import { getT, homeHref, aboutHref, isAbout } from "../i18n.js";
 const t = getT(Astro);
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const hrefs = ["#", "#intro", "#services", "#pricing", "#faq"];
-const other = { href: homeHref(t.lang === "ar" ? "en" : "ar"), lang: t.lang === "ar" ? "en" : "ar" };
+// on the About page the section links lead back to the home page; "About us" is its own page
+const about = isAbout(Astro), home = about ? homeHref(t.lang) : "";
+const hrefs = [home || "#", aboutHref(t.lang), `${home}#services`, `${home}#pricing`, `${home}#faq`];
+const otherLang = t.lang === "ar" ? "en" : "ar";
+const other = { href: (about ? aboutHref : homeHref)(otherLang), lang: otherLang };
 ---
 <nav>
-  <a href="#" class="logo" aria-label={`Cairo Creatives ${t.nav.home}`}><img src={`${base}/logo.svg`} alt=""><span>Cairo Creatives</span></a>
+  <a href={hrefs[0]} class="logo" aria-label={`Cairo Creatives ${t.nav.home}`}><img src={`${base}/logo.svg`} alt=""><span>Cairo Creatives</span></a>
   <div class="links">
     {t.nav.links.map((label, i) => <a href={hrefs[i]}><span class="roll"><span data-t={label}>{label}</span></span><sup>{String(i + 1).padStart(2, "0")}</sup></a>)}
     <a href={other.href} class="lang-switch" hreflang={other.lang} lang={other.lang} aria-label={t.nav.otherLabel}>{t.nav.other}</a>

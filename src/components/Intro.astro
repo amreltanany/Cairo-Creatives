@@ -1,6 +1,6 @@
 ---
-import { getT } from "../i18n.js";
-const t = getT(Astro).intro;
+import { getT, aboutHref } from "../i18n.js";
+const T = getT(Astro), t = T.intro;
 ---
 <section class="intro" id="intro">
   <div class="intro-reveal" aria-hidden="true">
@@ -17,6 +17,6 @@ const t = getT(Astro).intro;
     <div class="tag">{t.tag}</div>
     <div class="big" id="litText">{t.big}</div>
     <p class="lead">{t.lead}</p>
-    <a href="#" class="btn dark"><span class="roll"><span data-t={t.more}>{t.more}</span></span></a>
+    <a href={aboutHref(T.lang)} class="btn dark"><span class="roll"><span data-t={t.more}>{t.more}</span></span></a>
   </div>
 </section>

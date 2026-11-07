@@ -401,17 +401,47 @@ html[lang="ar"] .swap{height:1.3em}
 /* CLIENTS: logo row that slides on its own and stops under the mouse */
 .clients{margin-bottom:100px}
 .clients .marquee{display:flex;overflow:hidden;padding:4px 0 36px;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
-.clients ul{display:flex;align-items:center;gap:72px;padding-right:72px;flex:none;animation:marquee 40s linear infinite}
+.clients ul{display:flex;align-items:center;gap:72px;padding-right:72px;flex:none;animation:marquee calc(var(--n) * 4.5s) linear infinite}
 .clients .marquee:hover ul{animation-play-state:paused}
 .clients li{flex:none;list-style:none}
-.clients a{position:relative;display:block}
+.clients li{position:relative}
 /* client name under the logo on hover */
-.clients a::after{content:attr(data-name);position:absolute;left:50%;top:calc(100% + 10px);transform:translate(-50%,4px);font:600 13px/1 var(--body);color:#fff;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
-.clients a:hover::after,.clients a:focus-visible::after{opacity:1;transform:translate(-50%,0)}
-.clients img{height:68px;width:auto;display:block;opacity:.75;transition:opacity .3s}
-.clients a:hover img,.clients a:focus-visible img{opacity:1}
+.clients li::after{content:attr(data-name);position:absolute;left:50%;top:calc(100% + 10px);transform:translate(-50%,4px);font:600 13px/1 var(--body);color:#fff;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.clients li:hover::after{opacity:1;transform:translate(-50%,0)}
+.clients img{height:68px;width:auto;max-width:220px;object-fit:contain;display:block;opacity:.75;transition:opacity .3s}
+.clients li:hover img{opacity:1}
 @keyframes marquee{to{transform:translateX(-100%)}}
-@media (max-width:760px){.clients{margin-bottom:64px}.clients ul{gap:44px;padding-right:44px}.clients img{height:48px}}
+@media (max-width:760px){.clients{margin-bottom:64px}.clients ul{gap:44px;padding-right:44px}.clients img{height:48px;max-width:160px}}
+/* ABOUT page (company profile) */
+.ab-hero,.ab-block{background:var(--navy);color:#fff}
+.ab-hero .wrap{padding-top:200px}
+.ab-title{font:600 clamp(44px,8vw,112px)/.95 var(--display);text-transform:uppercase;margin-bottom:32px}
+.ab-title .dim{opacity:.45}
+.ab-lead{font:500 clamp(18px,2vw,24px)/1.5 var(--body);color:rgba(255,255,255,.7);max-width:760px}
+.ab-stats{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:80px}
+.ab-stats li{border-top:1px solid rgba(255,255,255,.2);padding-top:20px;display:grid;gap:8px}
+.ab-stats strong{font:600 clamp(40px,5vw,64px)/1 var(--display);color:var(--accent)}
+.ab-stats span{font:500 15px/1.4 var(--body);color:rgba(255,255,255,.6)}
+.ab-block .wrap{border-top:1px solid rgba(255,255,255,.1)}
+.ab-block .h2{margin-bottom:56px;max-width:900px}
+.ab-split{display:grid;grid-template-columns:1fr 2fr;gap:40px}
+.ab-p{font:500 clamp(18px,1.8vw,22px)/1.6 var(--body);color:rgba(255,255,255,.75);margin-bottom:24px}
+.ab-teams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.ab-team{background:var(--navy-2);border:1px solid rgba(255,255,255,.1);padding:36px;display:flex;flex-direction:column;gap:16px}
+.ab-team sup,.ab-steps sup{font:600 13px/1 var(--mono);color:var(--accent)}
+.ab-team h3,.ab-steps h3,.ab-values h3{font:600 26px/1.1 var(--display);text-transform:uppercase}
+.ab-team p,.ab-steps p,.ab-values p{font:500 16px/1.6 var(--body);color:rgba(255,255,255,.65)}
+.ab-team ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px}
+.ab-team li{padding:8px 14px;border:1px solid rgba(255,255,255,.25);border-radius:999px;font:600 13px/1 var(--body)}
+.ab-steps{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.ab-steps li{border-top:2px solid var(--accent);padding-top:24px;display:grid;gap:12px;align-content:start}
+.ab-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;margin-top:8px}
+.ab-values div{display:grid;gap:12px;align-content:start}
+@media (max-width:900px){
+  .ab-stats,.ab-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ab-split,.ab-teams,.ab-values{grid-template-columns:minmax(0,1fr)}
+  .ab-hero .wrap{padding-top:150px}
+}
 /* phones: service titles shrink to fit the card (DEVELOPMENT overflowed) and the text block sits centred */
 @media (max-width:600px){
   .svc .txt{padding:28px 20px}

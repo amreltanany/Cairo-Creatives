@@ -1,0 +1,67 @@
+---
+import { getT } from "../i18n.js";
+import Clients from "./Clients.astro";
+import Contact from "./Contact.astro";
+const t = getT(Astro).about;
+const num = (i) => String(i + 1).padStart(2, "0");
+---
+<section class="ab-hero">
+  <div class="wrap">
+    <div class="tag rv">{t.tag}</div>
+    <h1 class="ab-title rv">{t.title[0]}<br><span class="dim">{t.title[1]}</span></h1>
+    <p class="ab-lead rv">{t.lead}</p>
+    <ul class="ab-stats">{t.stats.map(([n, label]) => <li class="rv"><strong dir="ltr">{n}</strong><span>{label}</span></li>)}</ul>
+  </div>
+</section>
+
+<section class="ab-block">
+  <div class="wrap ab-split">
+    <div class="tag rv">{t.storyTag}</div>
+    <div>{t.story.map((p) => <p class="ab-p rv">{p}</p>)}</div>
+  </div>
+</section>
+
+<section class="ab-block">
+  <div class="wrap">
+    <div class="tag rv">{t.whatTag}</div>
+    <h2 class="h2 rv">{t.whatTitle}</h2>
+    <div class="ab-teams">
+      {t.teams.map((team, i) => (
+        <article class="ab-team rv">
+          <sup>{num(i)}</sup>
+          <h3>{team.name}</h3>
+          <p>{team.text}</p>
+          <ul>{team.points.map((p) => <li>{p}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="ab-block">
+  <div class="wrap">
+    <div class="tag rv">{t.clientsTag}</div>
+    <h2 class="h2 rv">{t.clientsTitle}</h2>
+    <Clients title={false} />
+  </div>
+</section>
+
+<section class="ab-block">
+  <div class="wrap">
+    <div class="tag rv">{t.howTag}</div>
+    <h2 class="h2 rv">{t.howTitle}</h2>
+    <ol class="ab-steps">{t.steps.map(([name, text], i) => <li class="rv"><sup>{num(i)}</sup><h3>{name}</h3><p>{text}</p></li>)}</ol>
+  </div>
+</section>
+
+<section class="ab-block">
+  <div class="wrap">
+    <div class="tag rv">{t.valuesTag}</div>
+    <div class="ab-values">{t.values.map(([name, text]) => <div class="rv"><h3>{name}</h3><p>{text}</p></div>)}</div>
+  </div>
+</section>
+
+<Contact />
+<script>
+  import '../scripts/about.js';
+</script>

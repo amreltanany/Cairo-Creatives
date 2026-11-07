@@ -1,51 +1,4 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
-
-gsap.registerPlugin(ScrollTrigger);
-document.documentElement.classList.add('gsap');
-const $ = (id) => document.getElementById(id);
-// Arabic letters join, so letter-by-letter effects work on whole words there
-const AR = document.documentElement.lang === 'ar';
-
-// smooth scroll: always on (ignores the OS reduce-motion setting).
-// Lenis runs on GSAP's ticker so scroll-linked tweens and the page move on the same frame (no jitter).
-const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-gsap.ticker.add((time) => lenis.raf(time * 1000));
-gsap.ticker.lagSmoothing(0);
-lenis.on('scroll', ScrollTrigger.update);
-// intro loader showing (set by the inline <head> script): hold smooth scroll until the curtain has lifted
-if (document.documentElement.classList.contains('loading')) {
-  lenis.stop();
-  setTimeout(() => lenis.start(), 3400);
-}
-
-// in-page links glide through Lenis instead of jumping
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#"]');
-  if (!a) return;
-  e.preventDefault();
-  const h = a.getAttribute('href');
-  if (h === '#') return lenis.scrollTo(0);
-  // the page grows while gliding (lazy images, reveals), so the first target can land short:
-  // once the glide ends, settle on where the section is now
-  // Pricing lands on the cards, centred in the window (the nav hides on the way down), not the heading above them
-  const el = h === '#pricing' ? pslider : $(h.slice(1));
-  const gap = h === '#pricing' ? Math.max(8, (innerHeight - el.offsetHeight) / 2) : 70;
-  const go = (left) => lenis.scrollTo(el, { offset: -gap, onComplete: () => {
-    const off = el.getBoundingClientRect().top - gap;
-    if (left && Math.abs(off) > 2) go(left - 1);
-  } });
-  go(3);
-});
-
-// rolling text: one span per letter, delay index drives the piano stagger
-document.querySelectorAll('.roll').forEach((r) => {
-  const t = r.textContent.trim();
-  r.setAttribute('aria-label', t);
-  r.innerHTML = (AR ? [t] : [...t]).map((c, i) => `<span class="ch" aria-hidden="true" style="--i:${i}">${c}</span>`).join('');
-});
-
+import { gsap, $, AR, lenis } from './core.js';
 // hero scene: Cairo Tower + Qasr el Nil at night (stars, skyline, bridge lamps, reflections)
 const NS = 'http://www.w3.org/2000/svg';
 const el = (parent, tag, attrs) => {
@@ -115,7 +68,6 @@ const lit = [...litText.children];
 const hero = document.querySelector('.hero');
 // back-to-top button: shows once the hero is mostly scrolled past, glides up through Lenis
 const toTop = document.querySelector('.to-top');
-toTop.onclick = () => lenis.scrollTo(0);
 const depth = [...hero.querySelectorAll('.layer')].map((l) => [l, +l.dataset.k]);
 const towerLayer = hero.querySelector('.tower-layer');
 // self-drawing arrows: drawn once when a quarter is on screen, or as soon as the page is scrolled past them.
@@ -193,21 +145,6 @@ for (const s of document.querySelectorAll('#stars1 circle')) {
 lenis.on('scroll', ({ scroll }) => onScroll(scroll));
 addEventListener('resize', () => { measure(); onScroll(scrollY); });
 
-// mobile menu: burger toggles, Escape or a link closes, focus returns to burger
-const menu = $('menu'), burger = document.querySelector('.burger');
-const setMenu = (open) => {
-  menu.classList.toggle('open', open);
-  menu.setAttribute('aria-hidden', !open);
-  burger.setAttribute('aria-expanded', open);
-  burger.setAttribute('aria-label', open ? burger.dataset.close : burger.dataset.open);
-  open ? lenis.stop() : lenis.start();
-  if (open) menu.querySelector('a').focus();
-};
-burger.onclick = () => setMenu(!menu.classList.contains('open'));
-menu.onclick = (e) => { if (e.target.tagName === 'A') setMenu(false); };
-addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); burger.focus(); }
-});
 
 // pricing slider: side cards, swipe and arrow keys all move the same index
 const pslider = document.querySelector('.pslider'), pcards = [...pslider.querySelectorAll('.pcard')], pn = pcards.length;
@@ -315,20 +252,4 @@ pcalcRun();
 // arrow keys in a form control move its value or cursor, not the slider
 pslider.querySelectorAll('input,select,summary').forEach((n) => n.addEventListener('keydown', (e) => e.stopPropagation()));
 
-// fade-up reveal on view
-const io =new IntersectionObserver((es) => es.forEach((e) => {
-  if (!e.isIntersecting) return;
-  e.target.classList.add('in');
-  io.unobserve(e.target);
-}), { threshold: 0.2 });
-document.querySelectorAll('.rv').forEach((n) => io.observe(n));
-
-// clip-path image reveals + scrubbed parallax
-gsap.utils.toArray('.reveal').forEach((r) => {
-  const st = { trigger: r, start: 'top 85%' };
-  gsap.fromTo(r, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 1.4, ease: 'expo.out', scrollTrigger: st });
-  // project cards: zoom the inner image, then hand transform back to the CSS hover
-  const img = r.querySelector('.ph');
-  if (img) gsap.fromTo(img, { scale: 1.3 }, { scale: 1, duration: 1.4, ease: 'expo.out', scrollTrigger: st, clearProps: 'transform' });
-});
 gsap.to('.hero-bottom', { y: -120, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
